@@ -1,0 +1,660 @@
+NETWORK INTRUSION DETECTION - live simulation  (9 phases, ensemble + K-Means detector)
+
+
+=== Normal traffic ===
+[ok           ] 00:30:58  10.0.0.230      -> 10.0.9.1:443   udp         18 kbps GET /
+[ok           ] 00:30:58  10.0.0.27       -> 10.0.9.1:443   tcp        978 kbps GET /products?id=107
+[ok           ] 00:30:59  10.0.3.50       -> 10.0.9.3:22    tcp          8 kbps GET /search?q=temple+darshan
+[ok           ] 00:31:00  10.0.2.126      -> 10.0.9.1:443   tcp         77 kbps GET /
+[ok           ] 00:31:00  10.0.1.50       -> 10.0.9.3:443   tcp          4 kbps GET /news?cat=donation
+[ok           ] 00:31:01  10.0.0.58       -> 10.0.9.1:22    tcp          1 kbps GET /search?q=rice+and+curry
+[ok           ] 00:31:01  10.0.2.239      -> 10.0.9.1:443   tcp         75 kbps GET /products?id=30
+[ALERT HIGH    ] 00:31:02  10.0.0.91       -> 10.0.9.2:443   tcp         23 kbps GET /news?cat=timings
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 8.6 is above the normal limit 6.9; no known signature
+[ok           ] 00:31:02  10.0.3.111      -> 10.0.9.1:80    tcp          7 kbps GET /products?id=860
+[ok           ] 00:31:04  10.0.2.81       -> 10.0.9.1:443   udp          2 kbps GET /search?q=festival+map
+[ok           ] 00:31:05  10.0.0.242      -> 10.0.9.1:443   tcp          8 kbps POST /login?user=u316
+
+=== DoS flood ===
+[ALERT HIGH    ] 00:31:05  203.0.113.12    -> 10.0.9.3:80    tcp          4 kbps GET /?x=425308
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 276 connections/2s, SYN-error rate 83%, 420 pkt/s
+[ok           ] 00:31:05  10.0.1.70       -> 10.0.9.2:22    tcp         49 kbps GET /products?id=31
+[ALERT HIGH    ] 00:31:05  203.0.113.13    -> 10.0.9.1:80    icmp         7 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 249 connections/2s, SYN-error rate 95%, 291 pkt/s
+[ALERT HIGH    ] 00:31:05  203.0.113.15    -> 10.0.9.3:80    tcp         96 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 252 connections/2s, SYN-error rate 96%, 1084 pkt/s
+[ALERT HIGH    ] 00:31:05  203.0.113.14    -> 10.0.9.3:80    tcp          0 kbps GET /?x=431841
+    -> DOS (ensemble, T1498 Network Denial of Service): 6 connections/2s, SYN-error rate 5%, 365 pkt/s
+[ALERT HIGH    ] 00:31:05  203.0.113.14    -> 10.0.9.3:80    icmp        31 kbps GET /?x=921596
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 41 connections/2s, SYN-error rate 23%, 96 pkt/s
+[ALERT HIGH    ] 00:31:05  203.0.113.14    -> 10.0.9.2:80    tcp        840 kbps GET /?x=425553
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 11 connections/2s, SYN-error rate 81%, 11 pkt/s
+[ALERT HIGH    ] 00:31:05  203.0.113.11    -> 10.0.9.1:80    tcp         41 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 248 connections/2s, SYN-error rate 95%, 925 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.11    -> 10.0.9.1:80    icmp        11 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 253 connections/2s, SYN-error rate 89%, 559 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.12    -> 10.0.9.3:80    icmp        42 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 44 connections/2s, SYN-error rate 57%, 97 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.10    -> 10.0.9.2:80    tcp          2 kbps GET /?x=269521
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 232 connections/2s, SYN-error rate 93%, 1805 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.12    -> 10.0.9.3:80    tcp          0 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 235 connections/2s, SYN-error rate 0%, 688 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.12    -> 10.0.9.2:80    tcp         24 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 278 connections/2s, SYN-error rate 96%, 1313 pkt/s
+00:31:06  FIREWALL: blocked 203.0.113.12 after 5 DOS alerts
+[ALERT HIGH    ] 00:31:06  203.0.113.12    -> 10.0.9.3:80    tcp          2 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 238 connections/2s, SYN-error rate 74%, 378 pkt/s
+[DROPPED       ] 00:31:06  203.0.113.12    -> 10.0.9.1:80    udp          2 kbps
+[ALERT HIGH    ] 00:31:06  203.0.113.15    -> 10.0.9.3:80    tcp        201 kbps GET /?x=124214
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 259 connections/2s, SYN-error rate 83%, 484 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.11    -> 10.0.9.3:80    icmp         4 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 240 connections/2s, SYN-error rate 79%, 460 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.13    -> 10.0.9.1:80    icmp        13 kbps GET /?x=668096
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 265 connections/2s, SYN-error rate 99%, 528 pkt/s
+[ok           ] 00:31:06  10.0.2.36       -> 10.0.9.2:443   udp          3 kbps GET /news?cat=festival
+[ALERT HIGH    ] 00:31:06  203.0.113.10    -> 10.0.9.3:80    icmp         5 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 258 connections/2s, SYN-error rate 85%, 167 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.13    -> 10.0.9.1:80    tcp         31 kbps GET /?x=857561
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 256 connections/2s, SYN-error rate 92%, 873 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.10    -> 10.0.9.3:80    icmp        28 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 255 connections/2s, SYN-error rate 93%, 406 pkt/s
+[DROPPED       ] 00:31:06  203.0.113.12    -> 10.0.9.3:80    icmp         1 kbps GET /?x=462379
+[DROPPED       ] 00:31:06  203.0.113.12    -> 10.0.9.1:80    tcp          2 kbps GET /?x=29964
+[ALERT HIGH    ] 00:31:06  203.0.113.11    -> 10.0.9.3:80    tcp         37 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 272 connections/2s, SYN-error rate 2%, 215 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.13    -> 10.0.9.3:80    icmp       100 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 277 connections/2s, SYN-error rate 92%, 301 pkt/s
+[ALERT HIGH    ] 00:31:06  203.0.113.15    -> 10.0.9.2:80    icmp         6 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 246 connections/2s, SYN-error rate 83%, 294 pkt/s
+00:31:06  FIREWALL: blocked 203.0.113.13 after 5 DOS alerts
+[ALERT HIGH    ] 00:31:06  203.0.113.13    -> 10.0.9.1:80    tcp          4 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 278 connections/2s, SYN-error rate 93%, 329 pkt/s
+[DROPPED       ] 00:31:06  203.0.113.13    -> 10.0.9.2:80    tcp         24 kbps GET /?x=446514
+[ALERT HIGH    ] 00:31:06  203.0.113.15    -> 10.0.9.2:80    tcp          2 kbps GET /?x=946672
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 251 connections/2s, SYN-error rate 91%, 244 pkt/s
+[ok           ] 00:31:06  10.0.2.65       -> 10.0.9.3:443   tcp         26 kbps GET /
+[DROPPED       ] 00:31:07  203.0.113.13    -> 10.0.9.1:80    icmp         5 kbps GET /?x=553842
+[DROPPED       ] 00:31:07  203.0.113.12    -> 10.0.9.2:80    udp          1 kbps GET /?x=121127
+[DROPPED       ] 00:31:07  203.0.113.12    -> 10.0.9.2:80    tcp          1 kbps GET /?x=892071
+[ALERT HIGH    ] 00:31:07  203.0.113.10    -> 10.0.9.1:80    tcp          6 kbps GET /?x=131417
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 236 connections/2s, SYN-error rate 87%, 388 pkt/s
+[ALERT HIGH    ] 00:31:07  203.0.113.14    -> 10.0.9.1:80    tcp         36 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 263 connections/2s, SYN-error rate 77%, 160 pkt/s
+00:31:07  FIREWALL: blocked 203.0.113.11 after 5 DOS alerts
+[ALERT HIGH    ] 00:31:07  203.0.113.11    -> 10.0.9.3:80    udp         81 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 265 connections/2s, SYN-error rate 91%, 692 pkt/s
+00:31:07  FIREWALL: blocked 203.0.113.14 after 5 DOS alerts
+[ALERT HIGH    ] 00:31:07  203.0.113.14    -> 10.0.9.1:80    tcp          2 kbps GET /?x=879112
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 270 connections/2s, SYN-error rate 99%, 743 pkt/s
+[DROPPED       ] 00:31:07  203.0.113.12    -> 10.0.9.2:80    icmp         2 kbps GET /?x=662128
+00:31:07  FIREWALL: blocked 203.0.113.10 after 5 DOS alerts
+[ALERT HIGH    ] 00:31:07  203.0.113.10    -> 10.0.9.1:80    tcp          5 kbps GET /?x=421491
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 46 connections/2s, SYN-error rate 23%, 96 pkt/s
+[DROPPED       ] 00:31:07  203.0.113.12    -> 10.0.9.2:80    tcp         13 kbps GET /?x=402699
+[ok           ] 00:31:07  10.0.1.206      -> 10.0.9.3:443   udp         30 kbps GET /products?id=106
+00:31:07  FIREWALL: blocked 203.0.113.15 after 5 DOS alerts
+[ALERT HIGH    ] 00:31:07  203.0.113.15    -> 10.0.9.3:80    tcp         12 kbps
+    -> DOS (ensemble + k-means, T1498 Network Denial of Service): 273 connections/2s, SYN-error rate 94%, 153 pkt/s
+[DROPPED       ] 00:31:07  203.0.113.10    -> 10.0.9.2:80    tcp          2 kbps GET /?x=925826
+[DROPPED       ] 00:31:07  203.0.113.12    -> 10.0.9.2:80    tcp         30 kbps
+[DROPPED       ] 00:31:07  203.0.113.12    -> 10.0.9.2:80    icmp         1 kbps GET /?x=426698
+[DROPPED       ] 00:31:07  203.0.113.11    -> 10.0.9.2:80    icmp       204 kbps
+[DROPPED       ] 00:31:07  203.0.113.14    -> 10.0.9.3:80    icmp        40 kbps
+[DROPPED       ] 00:31:07  203.0.113.14    -> 10.0.9.2:80    tcp         92 kbps
+[DROPPED       ] 00:31:07  203.0.113.15    -> 10.0.9.3:80    tcp         30 kbps GET /?x=220848
+[DROPPED       ] 00:31:07  203.0.113.14    -> 10.0.9.1:80    tcp         67 kbps
+[DROPPED       ] 00:31:07  203.0.113.14    -> 10.0.9.1:80    icmp        41 kbps GET /?x=983132
+[ok           ] 00:31:07  10.0.0.34       -> 10.0.9.1:443   tcp        122 kbps POST /login?user=u104
+[DROPPED       ] 00:31:08  203.0.113.10    -> 10.0.9.2:80    icmp        26 kbps
+[DROPPED       ] 00:31:08  203.0.113.13    -> 10.0.9.1:80    tcp          8 kbps
+[DROPPED       ] 00:31:08  203.0.113.11    -> 10.0.9.1:80    tcp        144 kbps
+[DROPPED       ] 00:31:08  203.0.113.12    -> 10.0.9.3:80    icmp        41 kbps GET /?x=113610
+[DROPPED       ] 00:31:08  203.0.113.12    -> 10.0.9.2:80    tcp          2 kbps
+[DROPPED       ] 00:31:08  203.0.113.12    -> 10.0.9.1:80    tcp         24 kbps
+[DROPPED       ] 00:31:08  203.0.113.15    -> 10.0.9.1:80    tcp          0 kbps GET /?x=617117
+[ok           ] 00:31:08  10.0.1.99       -> 10.0.9.1:80    udp         88 kbps GET /search?q=festival+prasada
+[DROPPED       ] 00:31:08  203.0.113.15    -> 10.0.9.1:80    tcp         12 kbps
+[DROPPED       ] 00:31:08  203.0.113.12    -> 10.0.9.1:80    tcp         17 kbps
+[DROPPED       ] 00:31:08  203.0.113.11    -> 10.0.9.3:80    icmp        14 kbps
+[DROPPED       ] 00:31:08  203.0.113.11    -> 10.0.9.3:80    tcp          6 kbps
+[DROPPED       ] 00:31:08  203.0.113.14    -> 10.0.9.3:80    tcp      1,805 kbps GET /?x=496947
+[DROPPED       ] 00:31:08  203.0.113.15    -> 10.0.9.1:80    udp        116 kbps GET /?x=33676
+[DROPPED       ] 00:31:08  203.0.113.13    -> 10.0.9.1:80    tcp          4 kbps
+[DROPPED       ] 00:31:08  203.0.113.13    -> 10.0.9.2:80    tcp        121 kbps
+[DROPPED       ] 00:31:09  203.0.113.12    -> 10.0.9.3:80    icmp        47 kbps
+[DROPPED       ] 00:31:09  203.0.113.14    -> 10.0.9.1:80    tcp        122 kbps GET /?x=290681
+[DROPPED       ] 00:31:09  203.0.113.15    -> 10.0.9.3:80    tcp         66 kbps
+[DROPPED       ] 00:31:09  203.0.113.13    -> 10.0.9.1:80    tcp         34 kbps GET /?x=268853
+[DROPPED       ] 00:31:09  203.0.113.10    -> 10.0.9.2:80    icmp         2 kbps
+[DROPPED       ] 00:31:09  203.0.113.15    -> 10.0.9.1:80    icmp         2 kbps
+[DROPPED       ] 00:31:09  203.0.113.12    -> 10.0.9.2:80    icmp        90 kbps
+[DROPPED       ] 00:31:09  203.0.113.13    -> 10.0.9.2:80    icmp         5 kbps GET /?x=201597
+[DROPPED       ] 00:31:09  203.0.113.13    -> 10.0.9.1:80    icmp         3 kbps
+[DROPPED       ] 00:31:09  203.0.113.10    -> 10.0.9.2:80    tcp         67 kbps GET /?x=804388
+[DROPPED       ] 00:31:09  203.0.113.11    -> 10.0.9.1:80    icmp        18 kbps
+[DROPPED       ] 00:31:09  203.0.113.13    -> 10.0.9.2:80    icmp        29 kbps
+[DROPPED       ] 00:31:09  203.0.113.13    -> 10.0.9.3:80    icmp       153 kbps
+[DROPPED       ] 00:31:09  203.0.113.12    -> 10.0.9.2:80    tcp         22 kbps
+[DROPPED       ] 00:31:09  203.0.113.13    -> 10.0.9.2:80    tcp        147 kbps GET /?x=383701
+[DROPPED       ] 00:31:09  203.0.113.14    -> 10.0.9.1:80    icmp        63 kbps
+[ok           ] 00:31:09  10.0.0.183      -> 10.0.9.3:53    tcp         36 kbps GET /products?id=47
+[DROPPED       ] 00:31:09  203.0.113.13    -> 10.0.9.3:80    tcp          7 kbps
+[DROPPED       ] 00:31:09  203.0.113.11    -> 10.0.9.1:80    tcp        129 kbps GET /?x=927337
+[DROPPED       ] 00:31:09  203.0.113.13    -> 10.0.9.1:80    icmp         4 kbps GET /?x=113481
+[DROPPED       ] 00:31:09  203.0.113.11    -> 10.0.9.2:80    icmp         2 kbps GET /?x=119745
+[DROPPED       ] 00:31:10  203.0.113.14    -> 10.0.9.3:80    icmp         3 kbps GET /?x=981466
+[DROPPED       ] 00:31:10  203.0.113.11    -> 10.0.9.2:80    tcp         76 kbps GET /?x=12600
+[DROPPED       ] 00:31:10  203.0.113.12    -> 10.0.9.1:80    icmp        60 kbps
+[DROPPED       ] 00:31:10  203.0.113.15    -> 10.0.9.2:80    tcp         44 kbps
+[DROPPED       ] 00:31:10  203.0.113.11    -> 10.0.9.3:80    tcp          2 kbps GET /?x=953204
+[DROPPED       ] 00:31:10  203.0.113.10    -> 10.0.9.1:80    tcp          6 kbps
+[DROPPED       ] 00:31:10  203.0.113.12    -> 10.0.9.1:80    tcp          7 kbps GET /?x=831516
+[DROPPED       ] 00:31:10  203.0.113.15    -> 10.0.9.2:80    tcp         46 kbps GET /?x=974198
+[ok           ] 00:31:10  10.0.2.31       -> 10.0.9.2:443   tcp         13 kbps GET /news?cat=contact
+[DROPPED       ] 00:31:10  203.0.113.11    -> 10.0.9.3:80    tcp         81 kbps GET /?x=68600
+[DROPPED       ] 00:31:10  203.0.113.14    -> 10.0.9.2:80    tcp         16 kbps GET /?x=840260
+[DROPPED       ] 00:31:10  203.0.113.10    -> 10.0.9.2:80    tcp          6 kbps GET /?x=392007
+[DROPPED       ] 00:31:10  203.0.113.12    -> 10.0.9.2:80    icmp       341 kbps GET /?x=182469
+[DROPPED       ] 00:31:10  203.0.113.15    -> 10.0.9.3:80    tcp          3 kbps
+[DROPPED       ] 00:31:10  203.0.113.11    -> 10.0.9.2:80    tcp          5 kbps
+[DROPPED       ] 00:31:11  203.0.113.14    -> 10.0.9.3:80    icmp         6 kbps
+[DROPPED       ] 00:31:11  203.0.113.15    -> 10.0.9.3:80    icmp        61 kbps GET /?x=150640
+[DROPPED       ] 00:31:11  203.0.113.15    -> 10.0.9.1:80    tcp          7 kbps GET /?x=668142
+[DROPPED       ] 00:31:11  203.0.113.11    -> 10.0.9.2:80    tcp         19 kbps GET /?x=821818
+[DROPPED       ] 00:31:11  203.0.113.11    -> 10.0.9.3:80    icmp        12 kbps
+[ok           ] 00:31:11  10.0.3.42       -> 10.0.9.1:443   tcp         45 kbps GET /search?q=timings+parking
+[DROPPED       ] 00:31:11  203.0.113.14    -> 10.0.9.3:80    tcp          1 kbps
+[DROPPED       ] 00:31:11  203.0.113.10    -> 10.0.9.3:80    icmp        21 kbps
+[DROPPED       ] 00:31:11  203.0.113.12    -> 10.0.9.2:80    udp        158 kbps
+[DROPPED       ] 00:31:11  203.0.113.10    -> 10.0.9.1:80    udp          3 kbps GET /?x=347715
+[DROPPED       ] 00:31:11  203.0.113.15    -> 10.0.9.1:80    tcp          6 kbps GET /?x=129781
+[DROPPED       ] 00:31:11  203.0.113.13    -> 10.0.9.2:80    icmp        58 kbps
+[DROPPED       ] 00:31:11  203.0.113.14    -> 10.0.9.2:80    tcp         14 kbps GET /?x=388321
+[DROPPED       ] 00:31:11  203.0.113.14    -> 10.0.9.2:80    tcp          4 kbps GET /?x=142369
+[DROPPED       ] 00:31:11  203.0.113.11    -> 10.0.9.2:80    tcp         20 kbps
+[DROPPED       ] 00:31:11  203.0.113.15    -> 10.0.9.1:80    tcp        116 kbps GET /?x=481246
+[DROPPED       ] 00:31:11  203.0.113.10    -> 10.0.9.2:80    tcp         12 kbps
+[DROPPED       ] 00:31:12  203.0.113.12    -> 10.0.9.2:80    tcp          1 kbps
+[DROPPED       ] 00:31:12  203.0.113.11    -> 10.0.9.2:80    tcp          2 kbps
+[ok           ] 00:31:12  10.0.2.233      -> 10.0.9.2:53    tcp          2 kbps GET /search?q=contact+seva
+[DROPPED       ] 00:31:12  203.0.113.10    -> 10.0.9.3:80    tcp          4 kbps
+[DROPPED       ] 00:31:12  203.0.113.11    -> 10.0.9.2:80    tcp         11 kbps GET /?x=145804
+[DROPPED       ] 00:31:12  203.0.113.11    -> 10.0.9.1:80    icmp        81 kbps
+[DROPPED       ] 00:31:12  203.0.113.15    -> 10.0.9.2:80    tcp         12 kbps GET /?x=659252
+[DROPPED       ] 00:31:12  203.0.113.15    -> 10.0.9.3:80    icmp        20 kbps
+[DROPPED       ] 00:31:12  203.0.113.12    -> 10.0.9.3:80    tcp          1 kbps
+[DROPPED       ] 00:31:12  203.0.113.15    -> 10.0.9.1:80    tcp         10 kbps GET /?x=558090
+[DROPPED       ] 00:31:12  203.0.113.12    -> 10.0.9.1:80    tcp        170 kbps GET /?x=289191
+[DROPPED       ] 00:31:12  203.0.113.15    -> 10.0.9.2:80    tcp          9 kbps GET /?x=974349
+[DROPPED       ] 00:31:12  203.0.113.14    -> 10.0.9.3:80    tcp         19 kbps
+[DROPPED       ] 00:31:12  203.0.113.12    -> 10.0.9.1:80    tcp          2 kbps
+[DROPPED       ] 00:31:12  203.0.113.13    -> 10.0.9.1:80    icmp         6 kbps GET /?x=974464
+[DROPPED       ] 00:31:12  203.0.113.11    -> 10.0.9.2:80    tcp         85 kbps
+[DROPPED       ] 00:31:12  203.0.113.14    -> 10.0.9.1:80    tcp         46 kbps GET /?x=166784
+[DROPPED       ] 00:31:12  203.0.113.12    -> 10.0.9.3:80    tcp        158 kbps GET /?x=474858
+[DROPPED       ] 00:31:13  203.0.113.14    -> 10.0.9.3:80    udp        408 kbps GET /?x=233696
+[ok           ] 00:31:13  10.0.1.156      -> 10.0.9.1:22    tcp        609 kbps GET /
+[DROPPED       ] 00:31:13  203.0.113.11    -> 10.0.9.1:80    tcp          7 kbps GET /?x=490689
+[DROPPED       ] 00:31:13  203.0.113.11    -> 10.0.9.2:80    udp        122 kbps GET /?x=397919
+[DROPPED       ] 00:31:13  203.0.113.15    -> 10.0.9.3:80    icmp         1 kbps
+[DROPPED       ] 00:31:13  203.0.113.13    -> 10.0.9.1:80    icmp         5 kbps GET /?x=832904
+[DROPPED       ] 00:31:13  203.0.113.13    -> 10.0.9.3:80    icmp        23 kbps GET /?x=760971
+[DROPPED       ] 00:31:13  203.0.113.15    -> 10.0.9.2:80    tcp         61 kbps GET /?x=580593
+[DROPPED       ] 00:31:13  203.0.113.14    -> 10.0.9.3:80    tcp         16 kbps GET /?x=875657
+[DROPPED       ] 00:31:13  203.0.113.14    -> 10.0.9.1:80    icmp        15 kbps GET /?x=5628
+[DROPPED       ] 00:31:13  203.0.113.12    -> 10.0.9.3:80    icmp        30 kbps
+[DROPPED       ] 00:31:13  203.0.113.13    -> 10.0.9.2:80    icmp         4 kbps GET /?x=720248
+[DROPPED       ] 00:31:13  203.0.113.14    -> 10.0.9.1:80    tcp          1 kbps
+[DROPPED       ] 00:31:13  203.0.113.14    -> 10.0.9.2:80    tcp          1 kbps GET /?x=444772
+[DROPPED       ] 00:31:13  203.0.113.11    -> 10.0.9.1:80    tcp         10 kbps GET /?x=428543
+[ok           ] 00:31:14  10.0.3.147      -> 10.0.9.1:22    tcp          0 kbps GET /products?id=568
+[DROPPED       ] 00:31:14  203.0.113.12    -> 10.0.9.2:80    icmp        10 kbps
+[DROPPED       ] 00:31:14  203.0.113.11    -> 10.0.9.3:80    icmp         2 kbps GET /?x=315772
+[DROPPED       ] 00:31:14  203.0.113.15    -> 10.0.9.2:80    tcp         19 kbps GET /?x=120821
+[DROPPED       ] 00:31:14  203.0.113.12    -> 10.0.9.3:80    tcp          2 kbps
+[DROPPED       ] 00:31:14  203.0.113.15    -> 10.0.9.1:80    tcp        169 kbps GET /?x=905188
+[DROPPED       ] 00:31:14  203.0.113.13    -> 10.0.9.3:80    tcp          1 kbps GET /?x=425440
+[DROPPED       ] 00:31:14  203.0.113.12    -> 10.0.9.2:80    tcp         17 kbps GET /?x=192037
+[DROPPED       ] 00:31:14  203.0.113.13    -> 10.0.9.1:80    icmp        20 kbps
+[DROPPED       ] 00:31:14  203.0.113.14    -> 10.0.9.2:80    icmp         3 kbps GET /?x=638809
+[DROPPED       ] 00:31:14  203.0.113.15    -> 10.0.9.2:80    icmp         6 kbps GET /?x=898307
+[DROPPED       ] 00:31:14  203.0.113.13    -> 10.0.9.3:80    tcp         13 kbps GET /?x=114654
+[DROPPED       ] 00:31:14  203.0.113.14    -> 10.0.9.2:80    icmp         9 kbps GET /?x=643231
+[DROPPED       ] 00:31:14  203.0.113.11    -> 10.0.9.1:80    tcp          3 kbps GET /?x=135531
+[DROPPED       ] 00:31:14  203.0.113.12    -> 10.0.9.1:80    icmp         6 kbps
+[DROPPED       ] 00:31:14  203.0.113.11    -> 10.0.9.3:80    tcp          2 kbps
+[DROPPED       ] 00:31:14  203.0.113.15    -> 10.0.9.3:80    icmp        12 kbps
+[DROPPED       ] 00:31:14  203.0.113.12    -> 10.0.9.2:80    tcp        696 kbps
+[DROPPED       ] 00:31:14  203.0.113.15    -> 10.0.9.2:80    tcp         16 kbps
+[DROPPED       ] 00:31:14  203.0.113.14    -> 10.0.9.2:80    tcp        463 kbps
+[DROPPED       ] 00:31:14  203.0.113.10    -> 10.0.9.2:80    tcp          4 kbps
+[DROPPED       ] 00:31:14  203.0.113.14    -> 10.0.9.2:80    icmp        50 kbps
+[ok           ] 00:31:14  10.0.0.76       -> 10.0.9.2:443   tcp      1,165 kbps GET /search?q=seva+temple
+[DROPPED       ] 00:31:14  203.0.113.13    -> 10.0.9.3:80    tcp          6 kbps GET /?x=958880
+[DROPPED       ] 00:31:15  203.0.113.12    -> 10.0.9.1:80    tcp          3 kbps
+[DROPPED       ] 00:31:15  203.0.113.13    -> 10.0.9.1:80    tcp        123 kbps
+[DROPPED       ] 00:31:15  203.0.113.13    -> 10.0.9.3:80    icmp        11 kbps GET /?x=737943
+[DROPPED       ] 00:31:15  203.0.113.11    -> 10.0.9.1:80    tcp          2 kbps GET /?x=287577
+[DROPPED       ] 00:31:15  203.0.113.12    -> 10.0.9.1:80    icmp        51 kbps GET /?x=362166
+[DROPPED       ] 00:31:15  203.0.113.11    -> 10.0.9.1:80    tcp         72 kbps GET /?x=789155
+[DROPPED       ] 00:31:15  203.0.113.14    -> 10.0.9.2:80    tcp         68 kbps GET /?x=69771
+[DROPPED       ] 00:31:15  203.0.113.10    -> 10.0.9.1:80    udp          3 kbps GET /?x=496905
+[DROPPED       ] 00:31:15  203.0.113.14    -> 10.0.9.3:80    icmp        14 kbps GET /?x=783301
+[DROPPED       ] 00:31:15  203.0.113.10    -> 10.0.9.1:80    icmp        14 kbps GET /?x=450448
+[DROPPED       ] 00:31:15  203.0.113.12    -> 10.0.9.3:80    tcp         12 kbps
+[DROPPED       ] 00:31:15  203.0.113.11    -> 10.0.9.3:80    udp         19 kbps GET /?x=79073
+
+=== Normal traffic ===
+[ok           ] 00:31:15  10.0.3.179      -> 10.0.9.2:443   udp         71 kbps GET /search?q=parking+donation
+[ok           ] 00:31:16  10.0.2.191      -> 10.0.9.3:80    tcp         46 kbps GET /products?id=415
+[ok           ] 00:31:17  10.0.3.88       -> 10.0.9.3:443   tcp          1 kbps GET /search?q=temple+timings
+[ok           ] 00:31:18  10.0.2.134      -> 10.0.9.3:443   udp         28 kbps GET /
+[ok           ] 00:31:19  10.0.2.40       -> 10.0.9.3:80    tcp         25 kbps GET /
+[ok           ] 00:31:19  10.0.3.210      -> 10.0.9.1:22    tcp         16 kbps GET /search?q=festival+timings
+[ok           ] 00:31:20  10.0.3.173      -> 10.0.9.1:53    tcp         70 kbps GET /
+[ok           ] 00:31:21  10.0.2.211      -> 10.0.9.2:443   tcp         90 kbps POST /login?user=u2
+[ok           ] 00:31:21  10.0.0.93       -> 10.0.9.2:443   icmp       138 kbps GET /products?id=470
+[ok           ] 00:31:22  10.0.0.75       -> 10.0.9.3:443   tcp         20 kbps GET /
+
+=== Port / path scan ===
+[ALERT MEDIUM  ] 00:31:23  198.51.100.23   -> 10.0.9.3:4024  icmp        41 kbps GET /.git/config
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 22 distinct URLs, 127 hosts touched, 81% 4xx
+[ALERT MEDIUM  ] 00:31:23  198.51.100.24   -> 10.0.9.2:8545  udp         10 kbps
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 23 distinct URLs, 146 hosts touched, 62% 4xx
+[ok           ] 00:31:23  10.0.2.181      -> 10.0.9.1:22    tcp         33 kbps GET /products?id=839
+[ALERT MEDIUM  ] 00:31:23  198.51.100.23   -> 10.0.9.1:2943  tcp          1 kbps GET /config.php
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 20 distinct URLs, 188 hosts touched, 90% 4xx
+[ok           ] 00:31:24  10.0.1.230      -> 10.0.9.3:22    tcp        115 kbps GET /search?q=contact+donation
+[ALERT MEDIUM  ] 00:31:24  198.51.100.23   -> 10.0.9.3:9861  tcp          5 kbps GET /.env
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 29 distinct URLs, 192 hosts touched, 63% 4xx
+[ALERT MEDIUM  ] 00:31:24  198.51.100.24   -> 10.0.9.2:7274  tcp          3 kbps
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 33 distinct URLs, 196 hosts touched, 63% 4xx
+[ALERT MEDIUM  ] 00:31:24  198.51.100.24   -> 10.0.9.1:3060  tcp          8 kbps GET /server-status
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 21 distinct URLs, 125 hosts touched, 85% 4xx
+[ok           ] 00:31:24  10.0.1.108      -> 10.0.9.1:443   tcp        103 kbps GET /news?cat=contact
+[ALERT MEDIUM  ] 00:31:24  198.51.100.24   -> 10.0.9.2:1878  tcp         15 kbps
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 28 distinct URLs, 179 hosts touched, 82% 4xx
+00:31:25  FIREWALL: blocked 198.51.100.24 after 5 PROBE alerts
+[ALERT MEDIUM  ] 00:31:25  198.51.100.24   -> 10.0.9.1:9834  tcp         20 kbps GET /admin
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 22 distinct URLs, 26 hosts touched, 8% 4xx
+[ALERT MEDIUM  ] 00:31:25  198.51.100.23   -> 10.0.9.3:2264  tcp         25 kbps GET /server-status
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 25 distinct URLs, 135 hosts touched, 79% 4xx
+00:31:25  FIREWALL: blocked 198.51.100.23 after 5 PROBE alerts
+[ALERT MEDIUM  ] 00:31:25  198.51.100.23   -> 10.0.9.2:9934  tcp         32 kbps GET /admin
+    -> PROBE (ensemble + k-means, T1595 Active Scanning): 24 distinct URLs, 219 hosts touched, 73% 4xx
+[DROPPED       ] 00:31:25  198.51.100.24   -> 10.0.9.2:7571  udp          4 kbps
+[DROPPED       ] 00:31:25  198.51.100.23   -> 10.0.9.1:51    udp          6 kbps GET /server-status
+[DROPPED       ] 00:31:25  198.51.100.24   -> 10.0.9.1:7788  tcp         47 kbps GET /backup.zip
+[ok           ] 00:31:25  10.0.0.13       -> 10.0.9.2:80    tcp         15 kbps GET /
+[DROPPED       ] 00:31:25  198.51.100.23   -> 10.0.9.3:2124  tcp          4 kbps GET /wp-login.php
+[DROPPED       ] 00:31:25  198.51.100.24   -> 10.0.9.2:3619  icmp         1 kbps GET /server-status
+[DROPPED       ] 00:31:25  198.51.100.23   -> 10.0.9.3:5321  tcp         39 kbps GET /admin
+[DROPPED       ] 00:31:25  198.51.100.23   -> 10.0.9.1:2325  tcp         28 kbps GET /phpmyadmin
+[DROPPED       ] 00:31:25  198.51.100.24   -> 10.0.9.3:7077  tcp         18 kbps
+[DROPPED       ] 00:31:25  198.51.100.24   -> 10.0.9.2:2556  tcp          1 kbps GET /admin
+[DROPPED       ] 00:31:26  198.51.100.24   -> 10.0.9.2:381   tcp         15 kbps GET /backup.zip
+[DROPPED       ] 00:31:26  198.51.100.24   -> 10.0.9.2:1566  tcp         13 kbps
+[DROPPED       ] 00:31:26  198.51.100.23   -> 10.0.9.1:5757  tcp          3 kbps GET /server-status
+[DROPPED       ] 00:31:26  198.51.100.23   -> 10.0.9.1:7856  tcp         28 kbps
+[DROPPED       ] 00:31:26  198.51.100.24   -> 10.0.9.1:8961  udp          1 kbps GET /config.php
+[ok           ] 00:31:26  10.0.1.94       -> 10.0.9.2:443   tcp         19 kbps GET /search?q=prasada+prasada
+[DROPPED       ] 00:31:26  198.51.100.23   -> 10.0.9.2:7219  tcp         11 kbps GET /wp-login.php
+[DROPPED       ] 00:31:27  198.51.100.23   -> 10.0.9.3:9641  tcp          6 kbps GET /server-status
+[DROPPED       ] 00:31:27  198.51.100.23   -> 10.0.9.1:4210  udp          8 kbps GET /admin
+[DROPPED       ] 00:31:27  198.51.100.23   -> 10.0.9.1:9725  tcp         12 kbps GET /phpmyadmin
+[DROPPED       ] 00:31:27  198.51.100.23   -> 10.0.9.1:1606  tcp         15 kbps
+[DROPPED       ] 00:31:27  198.51.100.24   -> 10.0.9.1:6230  tcp         28 kbps
+[ok           ] 00:31:28  10.0.0.99       -> 10.0.9.1:53    tcp         21 kbps GET /products?id=875
+[DROPPED       ] 00:31:28  198.51.100.24   -> 10.0.9.1:291   tcp        294 kbps GET /phpmyadmin
+[DROPPED       ] 00:31:28  198.51.100.24   -> 10.0.9.2:9536  udp         10 kbps GET /server-status
+[DROPPED       ] 00:31:28  198.51.100.23   -> 10.0.9.2:3375  udp          2 kbps GET /backup.zip
+[DROPPED       ] 00:31:28  198.51.100.23   -> 10.0.9.2:3590  tcp         16 kbps GET /.env
+[DROPPED       ] 00:31:28  198.51.100.23   -> 10.0.9.1:2055  tcp        121 kbps GET /admin
+[DROPPED       ] 00:31:29  198.51.100.23   -> 10.0.9.1:4101  udp         48 kbps GET /backup.zip
+[ok           ] 00:31:29  10.0.2.67       -> 10.0.9.2:443   tcp          9 kbps POST /login?user=u303
+[DROPPED       ] 00:31:29  198.51.100.23   -> 10.0.9.2:5067  tcp          2 kbps
+[DROPPED       ] 00:31:29  198.51.100.24   -> 10.0.9.1:2169  tcp         19 kbps GET /wp-login.php
+[DROPPED       ] 00:31:29  198.51.100.24   -> 10.0.9.1:3350  tcp      1,386 kbps
+[DROPPED       ] 00:31:30  198.51.100.24   -> 10.0.9.1:5734  udp        959 kbps
+[ok           ] 00:31:30  10.0.3.137      -> 10.0.9.3:443   tcp          2 kbps GET /news?cat=parking
+[DROPPED       ] 00:31:30  198.51.100.24   -> 10.0.9.1:474   tcp          8 kbps GET /.env
+[DROPPED       ] 00:31:30  198.51.100.24   -> 10.0.9.2:4044  udp          5 kbps GET /.env
+[DROPPED       ] 00:31:30  198.51.100.23   -> 10.0.9.1:95    tcp          4 kbps GET /server-status
+[DROPPED       ] 00:31:30  198.51.100.23   -> 10.0.9.2:3472  tcp        135 kbps
+[DROPPED       ] 00:31:30  198.51.100.24   -> 10.0.9.2:8035  tcp      1,704 kbps GET /.git/config
+[DROPPED       ] 00:31:30  198.51.100.24   -> 10.0.9.1:2696  tcp          2 kbps GET /.env
+[DROPPED       ] 00:31:30  198.51.100.23   -> 10.0.9.1:1300  tcp      4,443 kbps
+[ok           ] 00:31:31  10.0.0.100      -> 10.0.9.1:80    tcp          4 kbps GET /products?id=34
+[DROPPED       ] 00:31:31  198.51.100.23   -> 10.0.9.1:8190  icmp        59 kbps GET /backup.zip
+[DROPPED       ] 00:31:31  198.51.100.24   -> 10.0.9.1:2457  tcp        113 kbps
+[DROPPED       ] 00:31:31  198.51.100.23   -> 10.0.9.3:1598  tcp         13 kbps
+[DROPPED       ] 00:31:31  198.51.100.23   -> 10.0.9.1:8538  tcp         11 kbps
+[DROPPED       ] 00:31:31  198.51.100.24   -> 10.0.9.2:312   tcp          4 kbps
+[DROPPED       ] 00:31:31  198.51.100.24   -> 10.0.9.2:4448  tcp         38 kbps
+[DROPPED       ] 00:31:31  198.51.100.24   -> 10.0.9.2:1372  tcp          2 kbps GET /.git/config
+[ok           ] 00:31:32  10.0.3.96       -> 10.0.9.1:80    tcp          5 kbps POST /login?user=u187
+[DROPPED       ] 00:31:32  198.51.100.24   -> 10.0.9.2:4911  tcp          8 kbps GET /admin
+[DROPPED       ] 00:31:32  198.51.100.24   -> 10.0.9.2:2031  tcp         10 kbps GET /.git/config
+[DROPPED       ] 00:31:32  198.51.100.24   -> 10.0.9.2:5064  udp          4 kbps GET /.env
+[DROPPED       ] 00:31:32  198.51.100.24   -> 10.0.9.3:3179  udp          4 kbps GET /.env
+[DROPPED       ] 00:31:32  198.51.100.24   -> 10.0.9.2:1494  udp          4 kbps
+[DROPPED       ] 00:31:32  198.51.100.24   -> 10.0.9.3:1437  udp         66 kbps GET /admin
+[DROPPED       ] 00:31:32  198.51.100.23   -> 10.0.9.2:2582  tcp         16 kbps GET /wp-login.php
+[ok           ] 00:31:33  10.0.3.157      -> 10.0.9.2:22    udp         15 kbps GET /news?cat=donation
+[DROPPED       ] 00:31:33  198.51.100.23   -> 10.0.9.2:7687  udp         10 kbps GET /admin
+[DROPPED       ] 00:31:33  198.51.100.24   -> 10.0.9.1:435   tcp         23 kbps
+
+=== Login brute force ===
+[ALERT HIGH    ] 00:31:33  192.0.2.78      -> 10.0.9.1:443   tcp          0 kbps POST /login?user=admin&pass=4da01ed
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 4 failed logins, 46% 401/403 responses
+[ALERT HIGH    ] 00:31:33  192.0.2.77      -> 10.0.9.3:443   tcp          0 kbps POST /login?user=admin&pass=7575b
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 2 failed logins, 80% 401/403 responses
+[ALERT HIGH    ] 00:31:33  192.0.2.77      -> 10.0.9.2:443   tcp          1 kbps POST /login?user=admin&pass=540d07d
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 3 failed logins, 82% 401/403 responses
+[ALERT HIGH    ] 00:31:33  192.0.2.78      -> 10.0.9.1:22    tcp          0 kbps POST /login?user=admin&pass=5aad51d
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 4 failed logins, 67% 401/403 responses
+[ok           ] 00:31:34  10.0.2.146      -> 10.0.9.1:443   tcp         27 kbps GET /products?id=772
+[ALERT HIGH    ] 00:31:34  192.0.2.77      -> 10.0.9.1:443   tcp          0 kbps POST /login?user=admin&pass=3fb8b43
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 4 failed logins, 84% 401/403 responses
+[ALERT HIGH    ] 00:31:34  192.0.2.77      -> 10.0.9.2:443   tcp          0 kbps POST /login?user=admin&pass=3177337
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 1 failed logins, 81% 401/403 responses
+[ALERT HIGH    ] 00:31:34  192.0.2.78      -> 10.0.9.2:22    tcp          0 kbps POST /login?user=admin&pass=5ec84de
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 2 failed logins, 84% 401/403 responses
+00:31:35  FIREWALL: blocked 192.0.2.77 after 5 BRUTE_FORCE alerts
+[ALERT HIGH    ] 00:31:35  192.0.2.77      -> 10.0.9.1:443   tcp          0 kbps POST /login?user=admin&pass=4b84bac
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 4 failed logins, 59% 401/403 responses
+[ALERT HIGH    ] 00:31:35  192.0.2.78      -> 10.0.9.2:22    tcp          1 kbps POST /login?user=admin&pass=517e307
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 3 failed logins, 65% 401/403 responses
+00:31:35  FIREWALL: blocked 192.0.2.78 after 5 BRUTE_FORCE alerts
+[ALERT HIGH    ] 00:31:35  192.0.2.78      -> 10.0.9.1:22    tcp          0 kbps POST /login?user=admin&pass=3d38841
+    -> BRUTE_FORCE (ensemble + k-means, T1110 Brute Force): 6 failed logins, 65% 401/403 responses
+[ok           ] 00:31:36  10.0.1.60       -> 10.0.9.2:443   tcp        869 kbps GET /search?q=festival+seva
+[DROPPED       ] 00:31:36  192.0.2.78      -> 10.0.9.1:443   tcp          0 kbps POST /login?user=admin&pass=55c0be7
+[ALERT HIGH    ] 00:31:36  10.0.2.245      -> 10.0.9.1:53    tcp         75 kbps GET /
+    -> UNKNOWN (k-means, T1071 Application Layer Protocol (C2)): K-Means distance 7.9 is above the normal limit 6.9; no known signature
+[DROPPED       ] 00:31:36  192.0.2.77      -> 10.0.9.1:22    tcp      5,750 kbps POST /login?user=admin&pass=1892943
+[DROPPED       ] 00:31:36  192.0.2.77      -> 10.0.9.2:22    tcp          0 kbps POST /login?user=admin&pass=4644e6f
+[DROPPED       ] 00:31:36  192.0.2.78      -> 10.0.9.3:443   tcp          0 kbps POST /login?user=admin&pass=1519088
+[DROPPED       ] 00:31:36  192.0.2.78      -> 10.0.9.3:443   tcp          0 kbps POST /login?user=admin&pass=1030eeb
+[ok           ] 00:31:36  10.0.0.197      -> 10.0.9.2:53    tcp         23 kbps GET /products?id=341
+[DROPPED       ] 00:31:36  192.0.2.78      -> 10.0.9.3:443   tcp          0 kbps POST /login?user=admin&pass=44eff2a
+[DROPPED       ] 00:31:37  192.0.2.78      -> 10.0.9.1:443   tcp          1 kbps POST /login?user=admin&pass=2ea7e33
+[DROPPED       ] 00:31:37  192.0.2.77      -> 10.0.9.3:22    tcp          0 kbps POST /login?user=admin&pass=4f02b19
+[ok           ] 00:31:37  10.0.1.49       -> 10.0.9.1:443   tcp          2 kbps GET /news?cat=donation
+[DROPPED       ] 00:31:37  192.0.2.78      -> 10.0.9.3:443   tcp         23 kbps POST /login?user=admin&pass=45176b7
+[DROPPED       ] 00:31:37  192.0.2.78      -> 10.0.9.2:443   tcp          0 kbps POST /login?user=admin&pass=8e3ba
+[DROPPED       ] 00:31:38  192.0.2.77      -> 10.0.9.3:443   tcp          1 kbps POST /login?user=admin&pass=1810f23
+[DROPPED       ] 00:31:38  192.0.2.78      -> 10.0.9.2:22    tcp          1 kbps POST /login?user=admin&pass=23ce402
+[ok           ] 00:31:38  10.0.3.230      -> 10.0.9.1:80    udp         46 kbps GET /search?q=temple+festival
+[DROPPED       ] 00:31:38  192.0.2.77      -> 10.0.9.1:22    tcp        238 kbps POST /login?user=admin&pass=2f3f8f2
+[DROPPED       ] 00:31:38  192.0.2.77      -> 10.0.9.1:443   tcp          0 kbps POST /login?user=admin&pass=37fc3b6
+[ALERT CRITICAL] 00:31:38  10.0.1.10       -> 10.0.9.1:22    udp          0 kbps GET /news?cat=events;festival
+    -> SQLI (ensemble, T1190 Exploit Public-Facing Application): 0 SQL keywords, 1 special chars in the request
+[ok           ] 00:31:39  10.0.0.167      -> 10.0.9.2:443   tcp          2 kbps GET /
+[DROPPED       ] 00:31:39  192.0.2.78      -> 10.0.9.1:22    tcp          0 kbps POST /login?user=admin&pass=1981cc4
+[DROPPED       ] 00:31:39  192.0.2.78      -> 10.0.9.1:443   tcp          0 kbps POST /login?user=admin&pass=517b821
+[DROPPED       ] 00:31:39  192.0.2.77      -> 10.0.9.3:443   tcp          0 kbps POST /login?user=admin&pass=4955fa4
+[ok           ] 00:31:40  10.0.3.118      -> 10.0.9.1:443   icmp        10 kbps GET /
+[DROPPED       ] 00:31:40  192.0.2.77      -> 10.0.9.3:22    udp          1 kbps POST /login?user=admin&pass=5d518e8
+[DROPPED       ] 00:31:40  192.0.2.77      -> 10.0.9.2:22    tcp          0 kbps POST /login?user=admin&pass=4225851
+[DROPPED       ] 00:31:40  192.0.2.77      -> 10.0.9.2:22    tcp          0 kbps POST /login?user=admin&pass=562d66a
+[DROPPED       ] 00:31:40  192.0.2.77      -> 10.0.9.2:22    tcp          0 kbps POST /login?user=admin&pass=5a2b73b
+[DROPPED       ] 00:31:40  192.0.2.78      -> 10.0.9.2:22    tcp          0 kbps POST /login?user=admin&pass=592b39c
+[DROPPED       ] 00:31:40  192.0.2.78      -> 10.0.9.1:22    tcp          0 kbps POST /login?user=admin&pass=b0db74
+[DROPPED       ] 00:31:41  192.0.2.78      -> 10.0.9.2:443   tcp        125 kbps POST /login?user=admin&pass=4986375
+[DROPPED       ] 00:31:41  192.0.2.77      -> 10.0.9.1:443   tcp          1 kbps POST /login?user=admin&pass=12816b4
+[ok           ] 00:31:41  10.0.1.23       -> 10.0.9.3:443   tcp          6 kbps GET /products?id=489
+[DROPPED       ] 00:31:41  192.0.2.78      -> 10.0.9.1:443   tcp          0 kbps POST /login?user=admin&pass=2c8059a
+[DROPPED       ] 00:31:41  192.0.2.77      -> 10.0.9.2:443   tcp          0 kbps POST /login?user=admin&pass=3be5cc1
+[DROPPED       ] 00:31:41  192.0.2.77      -> 10.0.9.1:443   tcp          1 kbps POST /login?user=admin&pass=254f0ec
+[DROPPED       ] 00:31:41  192.0.2.78      -> 10.0.9.3:22    tcp          1 kbps POST /login?user=admin&pass=575c7aa
+[DROPPED       ] 00:31:41  192.0.2.78      -> 10.0.9.1:443   tcp          0 kbps POST /login?user=admin&pass=3e5bb28
+[DROPPED       ] 00:31:41  192.0.2.77      -> 10.0.9.2:22    tcp          1 kbps POST /login?user=admin&pass=36b89f
+[ok           ] 00:31:42  10.0.3.111      -> 10.0.9.3:443   tcp          4 kbps GET /
+[DROPPED       ] 00:31:42  192.0.2.78      -> 10.0.9.1:22    tcp         21 kbps POST /login?user=admin&pass=27b9201
+[DROPPED       ] 00:31:42  192.0.2.77      -> 10.0.9.2:443   udp         14 kbps POST /login?user=admin&pass=2b122fb
+[DROPPED       ] 00:31:42  192.0.2.77      -> 10.0.9.2:443   tcp          0 kbps POST /login?user=admin&pass=4124833
+[DROPPED       ] 00:31:42  192.0.2.78      -> 10.0.9.3:443   tcp          0 kbps POST /login?user=admin&pass=339d2c7
+[DROPPED       ] 00:31:42  192.0.2.77      -> 10.0.9.2:22    udp        499 kbps POST /login?user=admin&pass=4ae8afb
+[DROPPED       ] 00:31:42  192.0.2.77      -> 10.0.9.1:443   tcp         35 kbps POST /login?user=admin&pass=26de320
+[DROPPED       ] 00:31:43  192.0.2.78      -> 10.0.9.2:22    tcp         38 kbps POST /login?user=admin&pass=526f20d
+[ok           ] 00:31:43  10.0.0.182      -> 10.0.9.2:443   udp          6 kbps POST /login?user=u254
+[DROPPED       ] 00:31:43  192.0.2.77      -> 10.0.9.2:443   tcp          0 kbps POST /login?user=admin&pass=558db32
+
+=== SQL injection attack ===
+[ALERT CRITICAL] 00:31:43  198.51.100.77   -> 10.0.9.2:443   tcp        535 kbps GET /news?cat=1'
+    -> SQLI (ensemble, T1190 Exploit Public-Facing Application): 0 SQL keywords, 1 special chars in the request
+[ALERT CRITICAL] 00:31:43  198.51.100.77   -> 10.0.9.1:443   tcp        150 kbps GET /products?id=%27+OR+%27x%27%3D%27x
+    -> SQLI (ensemble + k-means, T1190 Exploit Public-Facing Application): 1 SQL keywords, 4 special chars in the request
+[ALERT CRITICAL] 00:31:44  198.51.100.77   -> 10.0.9.2:443   tcp         78 kbps GET /login?user=admin'--
+    -> SQLI (ensemble, T1190 Exploit Public-Facing Application): 0 SQL keywords, 2 special chars in the request
+[ok           ] 00:31:44  10.0.3.65       -> 10.0.9.1:80    tcp        423 kbps GET /products?id=857
+[ALERT CRITICAL] 00:31:44  198.51.100.80   -> 10.0.9.1:443   tcp          9 kbps GET /login?user=1) OR (1=1
+    -> SQLI (ensemble, T1190 Exploit Public-Facing Application): 0 SQL keywords, 2 special chars in the request
+[ALERT CRITICAL] 00:31:45  198.51.100.80   -> 10.0.9.2:443   tcp         70 kbps GET /news?cat=1%29+OR+%281%3D1
+    -> SQLI (ensemble, T1190 Exploit Public-Facing Application): 0 SQL keywords, 2 special chars in the request
+[ALERT CRITICAL] 00:31:45  198.51.100.80   -> 10.0.9.3:443   tcp          2 kbps GET /products?id=' OR 1=1--
+    -> SQLI (ensemble + k-means, T1190 Exploit Public-Facing Application): 1 SQL keywords, 2 special chars in the request
+[ALERT CRITICAL] 00:31:45  198.51.100.77   -> 10.0.9.3:443   tcp         10 kbps GET /login?user=' OR 'x'='x
+    -> SQLI (ensemble + k-means, T1190 Exploit Public-Facing Application): 1 SQL keywords, 4 special chars in the request
+00:31:45  FIREWALL: blocked 198.51.100.77 after 5 SQLI alerts
+[ALERT CRITICAL] 00:31:45  198.51.100.77   -> 10.0.9.2:443   tcp         32 kbps GET /search?q=admin'--
+    -> SQLI (ensemble, T1190 Exploit Public-Facing Application): 0 SQL keywords, 2 special chars in the request
+[DROPPED       ] 00:31:46  198.51.100.77   -> 10.0.9.2:443   tcp         17 kbps GET /search?q=' OR 'x'='x
+[ok           ] 00:31:46  10.0.0.40       -> 10.0.9.2:443   tcp          2 kbps GET /products?id=260
+[DROPPED       ] 00:31:46  198.51.100.77   -> 10.0.9.2:443   tcp          1 kbps GET /login?user=1%27+AND+SLEEP%285%29--
+[DROPPED       ] 00:31:46  198.51.100.77   -> 10.0.9.2:443   tcp          0 kbps GET /search?q=1'
+00:31:46  FIREWALL: block on 203.0.113.12 expired
+[ALERT CRITICAL] 00:31:46  198.51.100.80   -> 10.0.9.3:443   tcp        112 kbps GET /products?id=1) OR (1=1
+    -> SQLI (ensemble, T1190 Exploit Public-Facing Application): 0 SQL keywords, 2 special chars in the request
+00:31:46  FIREWALL: blocked 198.51.100.80 after 5 SQLI alerts
+[ALERT CRITICAL] 00:31:46  198.51.100.80   -> 10.0.9.3:443   tcp         11 kbps GET /search?q=1; DROP TABLE users;--
+    -> SQLI (ensemble + k-means, T1190 Exploit Public-Facing Application): 1 SQL keywords, 3 special chars in the request
+00:31:47  FIREWALL: block on 203.0.113.13 expired
+[DROPPED       ] 00:31:47  198.51.100.80   -> 10.0.9.2:443   udp          6 kbps GET /search?q=1'
+00:31:47  FIREWALL: block on 203.0.113.11 expired
+00:31:47  FIREWALL: block on 203.0.113.14 expired
+00:31:47  FIREWALL: block on 203.0.113.10 expired
+00:31:47  FIREWALL: block on 203.0.113.15 expired
+[DROPPED       ] 00:31:47  198.51.100.77   -> 10.0.9.1:443   tcp          1 kbps GET /search?q=admin'--
+[ok           ] 00:31:47  10.0.0.102      -> 10.0.9.3:22    udp        239 kbps GET /
+[DROPPED       ] 00:31:47  198.51.100.77   -> 10.0.9.3:443   tcp          1 kbps GET /products?id=1'
+[DROPPED       ] 00:31:47  198.51.100.80   -> 10.0.9.3:443   icmp        23 kbps GET /news?cat=1 AND 1=1
+[DROPPED       ] 00:31:48  198.51.100.80   -> 10.0.9.2:443   udp         58 kbps GET /login?user=1; DROP TABLE users;--
+[DROPPED       ] 00:31:48  198.51.100.77   -> 10.0.9.3:443   tcp         14 kbps GET /login?user=' OR '1'='1
+[DROPPED       ] 00:31:48  198.51.100.80   -> 10.0.9.3:443   udp        253 kbps GET /products?id=1' AND SLEEP(5)--
+[ok           ] 00:31:48  10.0.0.112      -> 10.0.9.1:443   tcp          4 kbps GET /search?q=darshan+festival
+[DROPPED       ] 00:31:48  198.51.100.80   -> 10.0.9.3:443   tcp        711 kbps GET /products?id=' OR 1=1--
+[DROPPED       ] 00:31:48  198.51.100.77   -> 10.0.9.2:443   tcp         28 kbps GET /news?cat=1' AND SLEEP(5)--
+[DROPPED       ] 00:31:48  198.51.100.77   -> 10.0.9.3:443   tcp         48 kbps GET /news?cat=1'
+[ok           ] 00:31:49  10.0.0.159      -> 10.0.9.2:80    tcp      3,005 kbps GET /products?id=820
+[DROPPED       ] 00:31:49  198.51.100.77   -> 10.0.9.1:443   udp          1 kbps GET /products?id=1%3B+DROP+TABLE+users%3B--
+[DROPPED       ] 00:31:49  198.51.100.80   -> 10.0.9.3:443   tcp          0 kbps GET /products?id=1; DROP TABLE users;--
+[DROPPED       ] 00:31:50  198.51.100.77   -> 10.0.9.3:443   tcp         22 kbps GET /login?user=1 UNION SELECT NULL,table_name FROM informat
+[DROPPED       ] 00:31:50  198.51.100.77   -> 10.0.9.1:443   tcp        892 kbps GET /news?cat=admin'--
+[DROPPED       ] 00:31:50  198.51.100.77   -> 10.0.9.1:443   udp          8 kbps GET /login?user=1 UNION SELECT username,password FROM users-
+[DROPPED       ] 00:31:50  198.51.100.77   -> 10.0.9.2:443   tcp         13 kbps GET /search?q=1+UNION+SELECT+NULL%2Ctable_name+FROM+informat
+[DROPPED       ] 00:31:50  198.51.100.80   -> 10.0.9.1:443   tcp         34 kbps GET /login?user=1' AND SLEEP(5)--
+[DROPPED       ] 00:31:50  198.51.100.77   -> 10.0.9.1:443   tcp         21 kbps GET /search?q=1+UNION+SELECT+NULL%2Ctable_name+FROM+informat
+[DROPPED       ] 00:31:51  198.51.100.80   -> 10.0.9.1:443   tcp          9 kbps GET /login?user=' OR 'x'='x
+[DROPPED       ] 00:31:51  198.51.100.80   -> 10.0.9.2:443   udp          4 kbps GET /login?user=1 AND 1=1
+[ok           ] 00:31:51  10.0.3.48       -> 10.0.9.2:80    tcp      3,938 kbps GET /products?id=497
+[DROPPED       ] 00:31:51  198.51.100.80   -> 10.0.9.1:443   icmp        17 kbps GET /search?q=1' AND SLEEP(5)--
+[DROPPED       ] 00:31:51  198.51.100.80   -> 10.0.9.3:443   tcp          1 kbps GET /products?id=1 ORDER BY 5--
+[DROPPED       ] 00:31:51  198.51.100.80   -> 10.0.9.2:443   udp          4 kbps GET /login?user=admin'--
+[ok           ] 00:31:52  10.0.3.13       -> 10.0.9.2:443   tcp         43 kbps GET /
+[DROPPED       ] 00:31:52  198.51.100.80   -> 10.0.9.1:443   tcp          7 kbps GET /login?user=admin%27--
+[DROPPED       ] 00:31:52  198.51.100.80   -> 10.0.9.3:443   tcp        970 kbps GET /search?q=admin%27--
+[DROPPED       ] 00:31:52  198.51.100.77   -> 10.0.9.2:443   icmp       185 kbps GET /news?cat=1 AND 1=1
+[DROPPED       ] 00:31:53  198.51.100.80   -> 10.0.9.2:443   tcp        194 kbps GET /login?user=1'
+[ok           ] 00:31:53  10.0.2.219      -> 10.0.9.2:443   tcp          1 kbps GET /news?cat=parking
+[DROPPED       ] 00:31:53  198.51.100.77   -> 10.0.9.2:443   tcp          5 kbps GET /login?user=1 UNION SELECT username,password FROM users-
+[DROPPED       ] 00:31:53  198.51.100.80   -> 10.0.9.2:443   tcp         48 kbps GET /products?id=admin'--
+[DROPPED       ] 00:31:53  198.51.100.80   -> 10.0.9.3:443   tcp        411 kbps GET /news?cat=1 AND 1=1
+[DROPPED       ] 00:31:53  198.51.100.80   -> 10.0.9.1:443   tcp      1,661 kbps GET /products?id=' OR 'x'='x
+[DROPPED       ] 00:31:53  198.51.100.80   -> 10.0.9.2:443   udp        138 kbps GET /login?user=1; DROP TABLE users;--
+
+=== Data exfiltration (bandwidth abuse) ===
+[ok           ] 00:31:53  10.0.0.14       -> 10.0.9.2:443   tcp         25 kbps GET /news?cat=festival
+[ALERT CRITICAL] 00:31:54  10.0.7.55       -> 203.0.113.250:443   tcp        282 kbps GET /backup/db_dump.sql
+    -> EXFIL (ensemble + k-means, T1048 Exfiltration Over Alternative Protocol): 282 kbit/s, 1.0 MB in one session
+[ALERT CRITICAL] 00:31:54  10.0.7.55       -> 203.0.113.250:443   tcp      2,979 kbps GET /backup/db_dump.sql
+    -> EXFIL (ensemble, T1048 Exfiltration Over Alternative Protocol): 2,979 kbit/s, 4.0 MB in one session
+[ALERT CRITICAL] 00:31:54  10.0.7.55       -> 203.0.113.250:443   tcp        262 kbps GET /download?file=customers.csv
+    -> EXFIL (ensemble + k-means, T1048 Exfiltration Over Alternative Protocol): 262 kbit/s, 0.5 MB in one session
+[ALERT CRITICAL] 00:31:54  10.0.7.55       -> 203.0.113.250:443   tcp      1,658 kbps GET /backup/site_full.tar.gz
+    -> EXFIL (ensemble + k-means, T1048 Exfiltration Over Alternative Protocol): 1,657 kbit/s, 1.5 MB in one session
+00:31:54  FIREWALL: blocked 10.0.7.55 after 5 EXFIL alerts
+[ALERT CRITICAL] 00:31:54  10.0.7.55       -> 203.0.113.250:443   tcp      3,574 kbps GET /backup/site_full.tar.gz
+    -> EXFIL (ensemble, T1048 Exfiltration Over Alternative Protocol): 3,574 kbit/s, 2.2 MB in one session
+[ok           ] 00:31:54  10.0.3.155      -> 10.0.9.3:53    icmp         2 kbps GET /news?cat=events;festival
+[DROPPED       ] 00:31:54  10.0.7.55       -> 203.0.113.250:443   tcp      3,080 kbps GET /backup/site_full.tar.gz
+[ok           ] 00:31:55  10.0.3.188      -> 10.0.9.2:443   tcp         23 kbps POST /login?user=u380
+[DROPPED       ] 00:31:55  10.0.7.55       -> 203.0.113.250:443   tcp      1,376 kbps GET /backup/site_full.tar.gz
+[DROPPED       ] 00:31:56  10.0.7.55       -> 203.0.113.250:443   tcp        548 kbps GET /export/all_users.zip
+[ok           ] 00:31:56  10.0.3.125      -> 10.0.9.2:80    tcp         11 kbps GET /search?q=rice+and+curry
+[DROPPED       ] 00:31:56  10.0.7.55       -> 203.0.113.250:443   udp         14 kbps GET /download?file=customers.csv
+[DROPPED       ] 00:31:56  10.0.7.55       -> 203.0.113.250:443   tcp     50,829 kbps GET /download?file=customers.csv
+[DROPPED       ] 00:31:57  10.0.7.55       -> 203.0.113.250:443   tcp        343 kbps GET /download?file=customers.csv
+[ok           ] 00:31:57  10.0.2.75       -> 10.0.9.3:53    icmp       553 kbps POST /login?user=u123
+[DROPPED       ] 00:31:57  10.0.7.55       -> 203.0.113.250:443   tcp        721 kbps GET /backup/db_dump.sql
+[DROPPED       ] 00:31:57  10.0.7.55       -> 203.0.113.250:443   tcp        797 kbps GET /backup/db_dump.sql
+[DROPPED       ] 00:31:57  10.0.7.55       -> 203.0.113.250:443   tcp        257 kbps GET /backup/site_full.tar.gz
+[DROPPED       ] 00:31:58  10.0.7.55       -> 203.0.113.250:443   tcp         37 kbps GET /backup/db_dump.sql
+[DROPPED       ] 00:31:58  10.0.7.55       -> 203.0.113.250:443   tcp        398 kbps GET /backup/site_full.tar.gz
+[DROPPED       ] 00:31:58  10.0.7.55       -> 203.0.113.250:443   tcp        519 kbps GET /backup/db_dump.sql
+[DROPPED       ] 00:31:58  10.0.7.55       -> 203.0.113.250:443   tcp      1,326 kbps GET /backup/site_full.tar.gz
+[ok           ] 00:31:58  10.0.0.154      -> 10.0.9.3:22    tcp        289 kbps GET /search?q=o'brien
+[DROPPED       ] 00:31:59  10.0.7.55       -> 203.0.113.250:443   tcp      2,624 kbps GET /download?file=customers.csv
+[DROPPED       ] 00:31:59  10.0.7.55       -> 203.0.113.250:443   tcp        462 kbps GET /export/all_users.zip
+[DROPPED       ] 00:31:59  10.0.7.55       -> 203.0.113.250:443   udp          5 kbps GET /download?file=customers.csv
+[DROPPED       ] 00:31:59  10.0.7.55       -> 203.0.113.250:443   tcp        241 kbps GET /backup/db_dump.sql
+[ok           ] 00:32:00  10.0.2.55       -> 10.0.9.3:443   tcp        444 kbps GET /
+[DROPPED       ] 00:32:00  10.0.7.55       -> 203.0.113.250:443   udp          3 kbps GET /backup/site_full.tar.gz
+[DROPPED       ] 00:32:00  10.0.7.55       -> 203.0.113.250:443   tcp      7,565 kbps GET /backup/db_dump.sql
+[DROPPED       ] 00:32:00  10.0.7.55       -> 203.0.113.250:443   tcp      1,501 kbps GET /export/all_users.zip
+[DROPPED       ] 00:32:00  10.0.7.55       -> 203.0.113.250:443   tcp      8,917 kbps GET /download?file=customers.csv
+[DROPPED       ] 00:32:01  10.0.7.55       -> 203.0.113.250:443   udp      1,455 kbps GET /backup/site_full.tar.gz
+[ok           ] 00:32:01  10.0.0.220      -> 10.0.9.3:80    udp        576 kbps POST /login?user=u113
+[DROPPED       ] 00:32:01  10.0.7.55       -> 203.0.113.250:443   tcp      7,454 kbps GET /backup/db_dump.sql
+[DROPPED       ] 00:32:02  10.0.7.55       -> 203.0.113.250:443   tcp      1,006 kbps GET /backup/db_dump.sql
+[DROPPED       ] 00:32:02  10.0.7.55       -> 203.0.113.250:443   tcp        338 kbps GET /backup/db_dump.sql
+[DROPPED       ] 00:32:02  10.0.7.55       -> 203.0.113.250:443   tcp      2,680 kbps GET /download?file=customers.csv
+[DROPPED       ] 00:32:02  10.0.7.55       -> 203.0.113.250:443   tcp        487 kbps GET /download?file=customers.csv
+[ok           ] 00:32:02  10.0.2.47       -> 10.0.9.3:443   tcp         33 kbps GET /news?cat=prasada
+[DROPPED       ] 00:32:02  10.0.7.55       -> 203.0.113.250:443   tcp        110 kbps GET /backup/site_full.tar.gz
+[DROPPED       ] 00:32:02  10.0.7.55       -> 203.0.113.250:443   tcp      5,044 kbps GET /export/all_users.zip
+
+=== Unknown attack: botnet beaconing (zero-day) ===
+[ALERT HIGH    ] 00:32:03  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=417595
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 12.9 is above the normal limit 6.9; no known signature
+[ALERT HIGH    ] 00:32:03  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=7071ad
+    -> UNKNOWN (k-means, T1071 Application Layer Protocol (C2)): K-Means distance 10.1 is above the normal limit 6.9; no known signature
+[ALERT HIGH    ] 00:32:03  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=f001c1
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 12.3 is above the normal limit 6.9; no known signature
+[ok           ] 00:32:03  10.0.3.201      -> 10.0.9.2:22    udp          5 kbps GET /products?id=767
+[ALERT HIGH    ] 00:32:04  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=419b6b
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 12.4 is above the normal limit 6.9; no known signature
+[ALERT HIGH    ] 00:32:04  10.0.7.32       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=fa574b
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 13.0 is above the normal limit 6.9; no known signature
+[ALERT HIGH    ] 00:32:04  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=0ed5d7
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 14.4 is above the normal limit 6.9; no known signature
+00:32:04  FIREWALL: blocked 10.0.7.32 after 5 UNKNOWN alerts
+[ALERT HIGH    ] 00:32:04  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=1fedf9
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 11.6 is above the normal limit 6.9; no known signature
+[ALERT HIGH    ] 00:32:04  10.0.7.31       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=e5ae10
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 13.3 is above the normal limit 6.9; no known signature
+[DROPPED       ] 00:32:04  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=abfbe6
+[ok           ] 00:32:04  10.0.0.89       -> 10.0.9.1:443   tcp         62 kbps GET /
+[ALERT HIGH    ] 00:32:04  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=bd7af1
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 13.5 is above the normal limit 6.9; no known signature
+[DROPPED       ] 00:32:04  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=8b7fb4
+[DROPPED       ] 00:32:05  10.0.7.32       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=211389
+00:32:05  FIREWALL: blocked 10.0.7.31 after 5 UNKNOWN alerts
+[ALERT HIGH    ] 00:32:05  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=bded2e
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 12.8 is above the normal limit 6.9; no known signature
+[DROPPED       ] 00:32:05  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=791e6e
+00:32:05  FIREWALL: block on 198.51.100.24 expired
+00:32:05  FIREWALL: block on 198.51.100.23 expired
+[ok           ] 00:32:05  10.0.3.47       -> 10.0.9.1:443   tcp         15 kbps GET /search?q=seva+prasada
+[DROPPED       ] 00:32:05  10.0.7.31       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=c97ab5
+[DROPPED       ] 00:32:05  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=b20083
+[ok           ] 00:32:06  10.0.0.146      -> 10.0.9.1:22    udp        191 kbps GET /products?id=82
+[DROPPED       ] 00:32:06  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=9f6cf4
+[DROPPED       ] 00:32:06  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=c558d8
+[ok           ] 00:32:07  10.0.0.136      -> 10.0.9.1:443   tcp          2 kbps GET /news?cat=events;festival
+[DROPPED       ] 00:32:07  10.0.7.31       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=9ad949
+[DROPPED       ] 00:32:07  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=17c3e6
+[DROPPED       ] 00:32:07  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=aae4ca
+[ok           ] 00:32:07  10.0.1.128      -> 10.0.9.1:22    tcp          2 kbps GET /search?q=rice+and+curry
+[DROPPED       ] 00:32:08  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=2d4eb5
+[DROPPED       ] 00:32:08  10.0.7.31       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=dd90ac
+[DROPPED       ] 00:32:08  10.0.7.31       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=0470be
+[DROPPED       ] 00:32:08  10.0.7.32       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=017f3f
+[ok           ] 00:32:08  10.0.2.127      -> 10.0.9.1:53    udp         33 kbps GET /search?q=festival+prasada
+[ok           ] 00:32:09  10.0.2.81       -> 10.0.9.2:443   tcp         34 kbps GET /
+[DROPPED       ] 00:32:09  10.0.7.31       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=dae16e
+[DROPPED       ] 00:32:09  10.0.7.32       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=2c263f
+[DROPPED       ] 00:32:10  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=aa162a
+[DROPPED       ] 00:32:10  10.0.7.32       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=91da3a
+[DROPPED       ] 00:32:10  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=cbde06
+[ok           ] 00:32:10  10.0.3.180      -> 10.0.9.3:80    udp          4 kbps GET /news?cat=contact
+[DROPPED       ] 00:32:10  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=df47f0
+[DROPPED       ] 00:32:10  10.0.7.31       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=44a7a3
+[DROPPED       ] 00:32:11  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=498da6
+[DROPPED       ] 00:32:11  10.0.7.32       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=3ea3ad
+[DROPPED       ] 00:32:11  10.0.7.31       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=b69387
+[DROPPED       ] 00:32:11  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=1d2771
+[DROPPED       ] 00:32:11  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=e30c6e
+[ok           ] 00:32:11  10.0.2.113      -> 10.0.9.2:80    udp         86 kbps GET /news?cat=seva
+[DROPPED       ] 00:32:11  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=49fb9c
+[DROPPED       ] 00:32:11  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=e99806
+[DROPPED       ] 00:32:11  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=e7de42
+[ok           ] 00:32:12  10.0.2.23       -> 10.0.9.2:443   tcp         80 kbps GET /products?id=272
+[DROPPED       ] 00:32:12  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=a246a5
+[DROPPED       ] 00:32:12  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=b66f81
+[DROPPED       ] 00:32:12  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=650dd2
+[DROPPED       ] 00:32:12  10.0.7.32       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=3ecec9
+[DROPPED       ] 00:32:12  10.0.7.32       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=a4de19
+[ok           ] 00:32:12  10.0.1.28       -> 10.0.9.3:443   tcp         14 kbps GET /
+[DROPPED       ] 00:32:12  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=d406d7
+[ok           ] 00:32:13  10.0.1.185      -> 10.0.9.2:53    udp         20 kbps GET /products?id=195
+[DROPPED       ] 00:32:13  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=987b0f
+[DROPPED       ] 00:32:13  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=f180fc
+[DROPPED       ] 00:32:13  10.0.7.32       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=678136
+[DROPPED       ] 00:32:13  10.0.7.32       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=052f26
+[DROPPED       ] 00:32:13  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=1cf2bf
+[DROPPED       ] 00:32:14  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=8c524a
+[DROPPED       ] 00:32:14  10.0.7.32       -> 203.0.113.250:8443  udp          1 kbps POST /api/beacon?id=2616c4
+[DROPPED       ] 00:32:14  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=45c50f
+[DROPPED       ] 00:32:14  10.0.7.32       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=b87e1c
+[ok           ] 00:32:14  10.0.0.247      -> 10.0.9.2:22    tcp         30 kbps GET /search?q=parking+donation
+[DROPPED       ] 00:32:14  10.0.7.31       -> 203.0.113.250:8443  tcp          0 kbps POST /api/beacon?id=567506
+[DROPPED       ] 00:32:14  10.0.7.31       -> 203.0.113.250:8443  udp          0 kbps POST /api/beacon?id=53ad3d
+[DROPPED       ] 00:32:15  10.0.7.31       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=17ec34
+[DROPPED       ] 00:32:15  10.0.7.31       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=bd22a2
+[DROPPED       ] 00:32:15  10.0.7.32       -> 203.0.113.250:8443  tcp          1 kbps POST /api/beacon?id=04f9aa
+
+=== Normal traffic ===
+00:32:15  FIREWALL: block on 192.0.2.77 expired
+[ok           ] 00:32:15  10.0.2.19       -> 10.0.9.2:443   tcp         36 kbps GET /products?id=23
+00:32:16  FIREWALL: block on 192.0.2.78 expired
+[ok           ] 00:32:16  10.0.1.100      -> 10.0.9.2:53    udp         16 kbps GET /news?cat=parking
+[ALERT HIGH    ] 00:32:16  10.0.1.154      -> 10.0.9.3:53    udp          1 kbps GET /news?cat=map
+    -> UNKNOWN (ensemble + k-means, T1071 Application Layer Protocol (C2)): K-Means distance 10.0 is above the normal limit 6.9; no known signature
+[ok           ] 00:32:16  10.0.0.241      -> 10.0.9.3:80    tcp         27 kbps GET /products?id=803
+[ok           ] 00:32:17  10.0.3.80       -> 10.0.9.2:80    tcp      1,099 kbps POST /login?user=u231
+[ok           ] 00:32:18  10.0.0.61       -> 10.0.9.3:443   icmp        12 kbps GET /products?id=843
+[ok           ] 00:32:19  10.0.0.175      -> 10.0.9.3:443   udp        101 kbps GET /products?id=426
+[ok           ] 00:32:20  10.0.2.43       -> 10.0.9.2:443   tcp         64 kbps GET /news?cat=festival
+[ok           ] 00:32:21  10.0.3.203      -> 10.0.9.1:443   tcp         12 kbps GET /
+[ok           ] 00:32:22  10.0.3.235      -> 10.0.9.3:443   tcp         16 kbps GET /
+[ok           ] 00:32:23  10.0.0.98       -> 10.0.9.2:443   tcp        167 kbps POST /login?user=u26
+
+=== Baseline traffic ===
+
+SUMMARY
+  flows analysed   1197   attack flows 430   alerts 79   dropped by firewall 354
+  detection rate   99.8%   false-alarm rate 0.5%
+  alerts by type   dos 178, unknown 63, probe 63, brute_force 49, sqli 46, exfil 34
+  alert log saved  E:\CNS\nids_ml\reports\alerts.csv

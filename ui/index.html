@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sentinel NIDS</title>
+<style>
+:root { --bg:#000; --surface:#07080a; --raise:#0e1013; --line:#1b1e23; --line2:#2b3037;
+  --t1:#eceff4; --t2:#a9b1be; --t3:#7b8494; --red:#ff4d5e; --amber:#e6a82e; --green:#6fcf97; --orange:#f08a4b; --ice:#cfd8e6;
+  --cyan:#cfd8e6; --pink:#c58af0; --violet:#c58af0; --silver:#eceff4; --mute:#7b8494; --ink:#a9b1be; --panel:#07080a; }
+:root { color-scheme:dark; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--t2); font:14px/1.5 "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif; }
+.mono, .num { font-family:Consolas,"Cascadia Mono",monospace; font-variant-numeric:tabular-nums; }
+h1, h2 { margin:0; }
+header { display:flex; flex-wrap:wrap; align-items:center; gap:10px 24px; padding:12px 24px; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; background:#000; }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand svg { width:26px; height:26px; flex:none; }
+.brand h1 { font-size:14px; font-weight:700; letter-spacing:.16em; color:var(--t1); line-height:1.1; }
+.brand small { display:block; font-size:12px; color:var(--t3); letter-spacing:0; font-weight:400; margin-top:2px; }
+.status { display:flex; align-items:center; gap:18px; font-size:13px; color:var(--t2); min-width:0; flex:1; }
+.status > span { white-space:nowrap; } .status #phase { overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--green); margin-right:8px; animation:pulse 2s infinite; } .dot.off { background:var(--amber); animation:none; }
+@keyframes pulse { 50% { opacity:.35; } }
+.threat { font-size:12px; font-weight:700; letter-spacing:.1em; padding:6px 14px; border:1px solid; border-radius:3px; text-transform:uppercase; white-space:nowrap; }
+.t-LOW { color:var(--green); border-color:#2f6a49; } .t-ELEVATED { color:var(--amber); border-color:#7a5b16; }
+.t-HIGH { color:var(--orange); border-color:#8a4a22; background:rgba(240,138,75,.08); } .t-CRITICAL { color:#fff; border-color:var(--red); background:var(--red); }
+.model { font-size:12px; color:var(--t3); }
+main { padding:20px 24px 48px; display:grid; grid-template-columns:repeat(12,1fr); gap:16px; max-width:1480px; margin:0 auto; }
+.panel { background:var(--surface); border:1px solid var(--line); padding:16px; min-width:0; }
+.panel h2 { font-size:13px; font-weight:600; color:var(--t1); margin-bottom:12px; display:flex; align-items:baseline; gap:10px; }
+.panel h2 small { font-size:12px; font-weight:400; color:var(--t3); }
+.c3 { grid-column:span 3; } .c4 { grid-column:span 4; } .c5 { grid-column:span 5; } .c6 { grid-column:span 6; } .c7 { grid-column:span 7; } .c8 { grid-column:span 8; } .c12 { grid-column:1/-1; }
+/* situation strip: the numbers that define the state */
+.strip { grid-column:1/-1; display:grid; grid-template-columns:repeat(6,1fr); border:1px solid var(--line); background:var(--surface); }
+.stat { padding:14px 18px; border-left:1px solid var(--line); min-width:0; } .stat:first-child { border-left:0; }
+.stat .l { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--t3); }
+.stat .v { font-size:28px; line-height:1.2; color:var(--t1); margin:2px 0; } .stat .s { font-size:12px; color:var(--t3); }
+.stat .v.hot { color:var(--red); } .stat .v.warn { color:var(--amber); }
+svg { display:block; width:100%; height:auto; } svg text { fill:var(--t3); font-size:10px; font-family:Consolas,monospace; }
+.cap { font-size:12px; color:var(--t3); margin:4px 0 0; } .cap b { font-weight:600; }
+.feed { height:300px; overflow:auto; font:12px/1.65 Consolas,"Cascadia Mono",monospace; white-space:nowrap; background:#000; border:1px solid var(--line); padding:6px 10px; }
+.feed div { overflow:hidden; text-overflow:ellipsis; }
+.l-ok { color:#667082; } .l-alert { color:var(--red); } .l-dropped { color:#454c58; } .l-fw { color:var(--amber); }
+.tag { display:inline-block; padding:0 6px; font-size:11px; font-weight:700; letter-spacing:.04em; margin-right:6px; border-radius:2px; }
+.sev-critical { background:var(--red); color:#000; } .sev-high { border:1px solid var(--orange); color:var(--orange); } .sev-medium { border:1px solid var(--amber); color:var(--amber); } .sev- { border:1px solid var(--t3); color:var(--t3); }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; font-weight:500; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--t3); padding:4px 8px 6px; border-bottom:1px solid var(--line2); }
+td { padding:8px; border-bottom:1px solid var(--line); vertical-align:top; color:var(--t2); } td b { color:var(--t1); font-weight:600; }
+tr.new td { animation:flash 1.2s ease-out; } @keyframes flash { from { background:rgba(255,77,94,.3); } to { background:transparent; } }
+.scroll { max-height:320px; overflow:auto; }
+.sq { font:12px/1.5 Consolas,monospace; padding:8px 10px; border-left:2px solid var(--red); background:var(--raise); margin-bottom:8px; word-break:break-all; color:var(--t1); }
+.sq .m { color:var(--t3); font-size:11px; word-break:normal; } .hl-kw { color:#ff9aa5; font-weight:700; } .hl-sp { color:var(--amber); font-weight:700; }
+/* controls */
+button { font:inherit; font-size:13px; color:var(--t1); text-align:left; background:var(--raise); border:1px solid var(--line2); border-radius:3px; padding:9px 12px; cursor:pointer; transition:background .12s,border-color .12s; }
+button:hover { background:#161a1f; border-color:var(--t3); } button:active { transform:translateY(1px); }
+button:focus-visible { outline:2px solid var(--ice); outline-offset:2px; } button:disabled { opacity:.45; cursor:not-allowed; }
+button.atk i { font-style:normal; font-family:Consolas,monospace; color:var(--t3); margin-right:10px; } button.atk:hover { border-color:var(--red); }
+button.primary { background:var(--t1); color:#000; border-color:var(--t1); font-weight:600; text-align:center; } button.primary:hover { background:#fff; border-color:#fff; }
+button.ghost { background:transparent; color:var(--t2); }
+.grp { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--t3); margin:14px 0 6px; } .grp:first-of-type { margin-top:0; }
+.btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; } .btns .full { grid-column:1/-1; }
+.row { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:12px; } .row .bar { flex:1; height:4px; background:var(--line); } .row .bar i { display:block; height:100%; }
+.trow { display:grid; grid-template-columns:128px 1fr 40px 38px; align-items:center; gap:10px; margin:9px 0; font-size:13px; } .trow .tn { color:var(--t2); } .trow .bar { height:6px; background:var(--line); } .trow .bar i { display:block; height:100%; } .trow .tv { color:var(--t1); text-align:right; } .trow .tp { color:var(--t3); text-align:right; }
+.legend { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:12px; color:var(--t3); margin-top:6px; } .legend b { display:inline-block; width:8px; height:8px; margin-right:6px; border-radius:1px; }
+.ph { font-size:13px; padding:8px 12px; border:1px solid var(--line2); border-left:3px solid var(--t2); margin-bottom:14px; color:var(--t1); background:var(--raise); }
+.ph.hot { border-left-color:var(--red); }
+.gen { display:grid; grid-template-columns:repeat(4,1fr); gap:28px; }
+.fld { display:flex; align-items:center; gap:12px; margin:9px 0; font-size:13px; } .fld > span:first-child { width:104px; color:var(--t3); flex:none; }
+.fld input[type=range] { flex:1; min-width:0; accent-color:var(--t1); } .fld input[type=checkbox] { width:18px; height:18px; accent-color:var(--t1); }
+select { font:inherit; font-size:13px; color:var(--t1); background:var(--raise); border:1px solid var(--line2); border-radius:3px; padding:7px 10px; }
+select:focus-visible, input:focus-visible { outline:2px solid var(--ice); outline-offset:2px; }
+.empty { color:var(--t3); font-size:12px; padding:8px 0; }
+@media (max-width:1300px) { .gen { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:760px) { .gen { grid-template-columns:1fr; } }
+@media (max-width:1100px) { .c3,.c4,.c5,.c6,.c7,.c8 { grid-column:1/-1; } .strip { grid-template-columns:repeat(3,1fr); } .stat:nth-child(4) { border-left:0; } .stat:nth-child(n+4) { border-top:1px solid var(--line); } }
+@media (max-width:620px) { main { padding:14px 12px 32px; } header { padding:10px 12px; } .strip { grid-template-columns:repeat(2,1fr); } .stat:nth-child(odd) { border-left:0; } .stat:nth-child(even) { border-left:1px solid var(--line); } .stat:nth-child(n+3) { border-top:1px solid var(--line); } .stat .v { font-size:24px; } .feed { height:240px; } .status { flex-basis:100%; order:3; } }
+@media (prefers-reduced-motion:reduce) { .dot, tr.new td { animation:none; } button { transition:none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l11 4v9c0 7-4.6 12.4-11 15C9.6 27.4 5 22 5 15V6z" fill="none" stroke="#eceff4" stroke-width="1.6"/><path d="M11 16l3.5 3.5L21.5 12" fill="none" stroke="#eceff4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><h1>SENTINEL</h1><small>Network intrusion detection</small></div></div>
+  <div class="status"><span><span class="dot" id="dot"></span><span id="eng">Engine online</span></span><span class="num" id="clock">--:--:--</span><span id="phase">Scenario: --</span></div>
+  <span class="model" id="mdl">Ensemble + K-Means</span>
+  <span class="threat t-LOW" id="threat" role="status">Threat: LOW</span>
+</header>
+<main>
+  <section class="strip" aria-label="Current situation">
+    <div class="stat"><div class="l">Flows analysed</div><div class="v num" id="k-flows">0</div><div class="s" id="k-rate">&nbsp;</div></div>
+    <div class="stat"><div class="l">Alerts raised</div><div class="v num" id="k-alerts">0</div><div class="s">by the detectors</div></div>
+    <div class="stat"><div class="l">Dropped by firewall</div><div class="v num" id="k-drop">0</div><div class="s" id="k-blk">0 sources blocked</div></div>
+    <div class="stat"><div class="l">Detection rate</div><div class="v num" id="k-det">--</div><div class="s">attack flows caught*</div></div>
+    <div class="stat"><div class="l">False alarms</div><div class="v num" id="k-fa">--</div><div class="s">normal flows flagged*</div></div>
+    <div class="stat"><div class="l">Bandwidth</div><div class="v num" id="k-bw">0</div><div class="s">Mbit/s, last second</div></div>
+  </section>
+
+  <section class="panel c8"><h2>Traffic <small>last 2 minutes</small></h2>
+    <div class="cap">Bandwidth, Mbit/s</div><div id="ch-bw"></div>
+    <div class="cap">Flows per second (grey) and alerts per second (<b style="color:var(--red)">red</b>)</div><div id="ch-fl"></div>
+  </section>
+  <section class="panel c4"><h2>Attack types <small>since start</small></h2>
+    <div id="types" aria-label="Alerts by attack type"></div>
+    <div class="cap" id="recent" style="margin-top:14px"></div>
+  </section>
+
+  <section class="panel c7"><h2>Alerts <small>mapped to MITRE ATT&amp;CK</small></h2>
+    <div class="scroll"><table><thead><tr><th>Time</th><th>Severity</th><th>Alert</th><th>Source &rarr; target</th><th>Evidence</th></tr></thead><tbody id="alerts"></tbody></table><div class="empty" id="no-alerts">No alerts yet. Traffic looks normal. Launch an attack in the console below to see one.</div></div>
+  </section>
+  <section class="panel c5"><h2>Live traffic <small>every flow the sensor sees</small></h2><div class="feed" id="feed"></div></section>
+
+  <section class="panel c4"><h2>SQL injection <small>web access log</small></h2><div class="scroll" id="sqli"></div><div class="empty" id="no-sqli">No injection attempts seen.</div></section>
+  <section class="panel c4"><h2>Firewall <small>blocked sources and top offenders</small></h2>
+    <div class="grp">Blocked sources</div><div id="blocked"></div><div class="empty" id="no-blk">Nothing blocked.</div>
+    <div class="grp">Top offenders (alerts)</div><div id="top"></div>
+  </section>
+  <section class="panel c4"><h2>Console <small>simulate and respond</small></h2>
+    <div class="ph" id="ph">Baseline traffic</div>
+    <div class="grp">Launch an attack</div>
+    <div class="btns">
+      <button class="atk" data-a="dos"><i>01</i>DoS flood</button><button class="atk" data-a="probe"><i>02</i>Port scan</button>
+      <button class="atk" data-a="brute_force"><i>03</i>Brute force</button><button class="atk" data-a="sqli"><i>04</i>SQL injection</button>
+      <button class="atk" data-a="exfil"><i>05</i>Exfiltration</button><button class="atk" data-a="botnet"><i>06</i>Zero-day botnet</button>
+    </div>
+    <div class="grp">Scenario</div>
+    <div class="btns"><button class="primary full" id="b-scn">Run full scenario</button><button id="b-pause">Pause</button><button id="b-unb">Unblock all</button></div>
+    <div class="grp">Maintenance</div>
+    <div class="btns"><button class="ghost full" id="b-reset">Reset counters</button></div>
+  </section>
+
+  <section class="panel c12"><h2>Traffic generator and reports <small>normal traffic always runs; add random scenarios and export an attack report</small></h2>
+    <div class="gen">
+      <div>
+        <div class="grp">Normal traffic</div>
+        <label class="fld"><span>Baseline rate</span><input type="range" id="rate" min="2" max="40" value="10"><output id="rate-o" class="num">10 flows/s</output></label>
+        <div class="btns"><button id="b-flash">Flash crowd (not an attack)</button><button id="b-random">Random scenario now</button></div>
+        <div class="cap">A flash crowd is a legitimate surge, for example a festival day. It tests whether the detectors stay quiet.</div>
+      </div>
+      <div>
+        <div class="grp">Random scenarios</div>
+        <label class="fld"><span>Auto mode</span><input type="checkbox" id="auto" aria-label="Start random scenarios automatically"><span id="auto-o" class="num">off</span></label>
+        <label class="fld"><span>Frequency</span><select id="level" aria-label="How often random scenarios start"><option value="calm">Calm (every 25-60 s)</option><option value="normal" selected>Normal (every 12-35 s)</option><option value="busy">Busy (every 5-15 s)</option></select></label>
+        <div class="cap">After a random quiet period of normal traffic, a random attack (random type, length and intensity) or a flash crowd starts.</div>
+      </div>
+      <div>
+        <div class="grp">Timed run</div>
+        <label class="fld"><span>Run for</span><select id="t-min" aria-label="How long to simulate"><option value="1">1 minute</option><option value="2">2 minutes</option><option value="5" selected>5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60">1 hour</option></select></label>
+        <label class="fld"><span>or until</span><input type="time" id="t-until" aria-label="Stop at this time of day"></label>
+        <label class="fld"><span>Options</span><span><label><input type="checkbox" id="t-fresh" checked> reset counters first</label><br><label><input type="checkbox" id="t-auto"> download the report at the end</label></span></label>
+        <div class="btns"><button class="primary" id="b-timer">Start timed run</button><button id="b-tcancel">Cancel timer</button></div>
+        <div class="cap" id="t-msg">Traffic is simulated until the time is reached, then it stops so the report covers exactly this run.</div>
+      </div>
+      <div>
+        <div class="grp">Attack report (PDF, 9+ pages)</div>
+        <label class="fld"><span>Time frame</span><select id="rep-min" aria-label="Time frame of the report"><option value="5">Last 5 minutes</option><option value="15">Last 15 minutes</option><option value="30">Last 30 minutes</option><option value="60">Last hour</option><option value="0" selected>Since start</option></select></label>
+        <div class="btns"><button class="primary full" id="b-report">Generate report</button></div>
+        <div class="cap" id="rep-msg">Summary, timeline, attack breakdown, offenders and firewall log, SQL injection and bandwidth, recommendations and the full alert log.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel c12"><h2>Detection engine <small>trained models, held-out test set</small></h2>
+    <div id="models" class="empty">loading...</div>
+    <div class="empty">* The simulator knows which flows are real attacks, so it can score the detectors. A real sensor never has this ground truth.</div>
+  </section>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const COL = { dos:"#ff3b4f", probe:"#e8b13a", brute_force:"#f0803c", sqli:"#d58cf0", exfil:"#8fd3ff", unknown:"#f2f5f9" };
+const NAME = { dos:"DoS flood", probe:"Scan", brute_force:"Brute force", sqli:"SQL injection", exfil:"Exfiltration", unknown:"Unknown (zero-day)" };
+const post = (u) => fetch(u, { method:"POST" }).then(() => tick());
+let since = 0, lastAlertId = 0, seq = 0;
+
+function line(chart, key, color, w, h, pad, ymax, fill) {
+  const n = chart.length; if (n < 2) return "";
+  const y = (v) => h - 16 - (Math.min(v, ymax) / ymax) * (h - 24), xs = (i) => pad + ((i + 120 - n) / 119) * (w - pad - 4);
+  const pts = chart.map((p, i) => `${xs(i).toFixed(1)},${y(p[key]).toFixed(1)}`);
+  return (fill ? `<polygon points="${xs(0)},${h - 16} ${pts.join(" ")} ${xs(n - 1)},${h - 16}" fill="${color}" opacity=".16"/>` : "") + `<polyline points="${pts.join(" ")}" fill="none" stroke="${color}" stroke-width="1.8"/>`;
+}
+function chart(el, series, specs, ymaxMin, unit) {
+  const w = 760, h = 118, pad = 34;
+  const ymax = Math.max(ymaxMin, ...series.flatMap((p) => specs.map((s) => p[s.key]))) * 1.1;
+  let g = [0, .5, 1].map((f) => `<line x1="${pad}" x2="${w - 4}" y1="${h - 16 - f * (h - 24)}" y2="${h - 16 - f * (h - 24)}" stroke="#1b1e24"/><text x="2" y="${h - 13 - f * (h - 24)}">${(ymax * f).toFixed(ymax < 5 ? 1 : 0)}</text>`).join("");
+  specs.forEach((s) => (g += line(series, s.key, s.color, w, h, pad, ymax, s.fill)));
+  if (series.length) g += `<text x="${pad}" y="${h - 2}">${series[0].t}</text><text x="${w - 50}" y="${h - 2}">${series[series.length - 1].t}</text>`;
+  el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${unit} over time">${g}</svg>`;
+}
+function setBreakdown(by) {
+  const rows = Object.entries(by).sort((a, b) => b[1] - a[1]), tot = rows.reduce((a, [, v]) => a + v, 0), mx = rows.length ? rows[0][1] : 1;
+  $("#types").innerHTML = rows.map(([k, v]) => `<div class="trow"><span class="tn">${NAME[k] || k}</span><span class="bar"><i style="width:${(v / mx) * 100}%;background:${COL[k] || "#888"}"></i></span><span class="num tv">${v}</span><span class="num tp">${Math.round((v / tot) * 100)}%</span></div>`).join("") || '<div class="empty">No attacks seen yet.</div>';
+}
+function hl(req) {
+  let s = esc(decodeURIComponent(req.replace(/\+/g, " ")));
+  s = s.replace(/\b(union|select|drop|insert|delete|sleep|information_schema|order by|or|and)\b/gi, (m) => `<span class="hl-kw">${m}</span>`);
+  return s.replace(/(&#39;|'|--|;|\(|\))/g, (m) => `<span class="hl-sp">${m}</span>`);
+}
+const bytes = (n) => (n > 1e6 ? (n / 1e6).toFixed(1) + " MB" : n > 1e3 ? (n / 1e3).toFixed(1) + " kB" : n + " B");
+
+function feedLine(e) {
+  const d = document.createElement("div");
+  if (e.kind === "fw") { d.className = "l-fw"; d.textContent = `${e.t}  [FIREWALL] ${e.msg.replace("FIREWALL: ", "")}`; return d; }
+  const base = `${e.t}  ${e.src.padEnd(15)} > ${(e.dst + ":" + e.port).padEnd(20)} ${e.proto.padEnd(4)} ${bytes(e.bytes).padStart(8)}`;
+  if (e.verdict === "alert") { d.className = "l-alert"; d.innerHTML = `<span class="tag sev-${e.sev}">${NAME[e.type] ? e.type.toUpperCase() : e.type}</span>${esc(base)} ${esc(e.request.slice(0, 50))}`; }
+  else if (e.verdict === "dropped") { d.className = "l-dropped"; d.textContent = `${base}  [dropped by firewall]`; }
+  else { d.className = "l-ok"; d.textContent = `${base} ${e.request.slice(0, 50)}`; }
+  return d;
+}
+function render(s) {
+  $("#clock").textContent = s.now;
+  const th = $("#threat"); th.textContent = "Threat: " + s.threat; th.className = "threat t-" + s.threat;
+  $("#recent").textContent = s.recent_alerts + " alert" + (s.recent_alerts === 1 ? "" : "s") + " in the last 10 s (LOW below 4, ELEVATED below 25, HIGH below 70)";
+  $("#k-alerts").classList.toggle("hot", s.threat !== "LOW"); $("#k-drop").classList.toggle("warn", s.kpi.dropped > 0);
+  $("#phase").textContent = "Scenario: " + s.phase.title + (s.phase.seconds_left != null ? ` (${s.phase.seconds_left}s)` : "") + (s.queue.length ? ` +${s.queue.length} queued` : "");
+  const ph = $("#ph"); ph.textContent = (s.paused ? "PAUSED - " : "") + s.phase.title + (s.phase.seconds_left != null ? ` - ${s.phase.seconds_left}s left` : ""); ph.className = "ph" + (s.phase.key !== "idle" && s.phase.key !== "normal" ? " hot" : "");
+  $("#dot").className = "dot" + (s.paused ? " off" : ""); $("#eng").textContent = s.paused ? "Engine paused" : "Engine online"; $("#b-pause").innerHTML = s.paused ? "Resume" : "Pause";
+  const busy = (el) => document.activeElement === el;
+  if (!busy($("#auto"))) $("#auto").checked = s.auto;
+  $("#auto-o").textContent = s.auto ? "on, " + s.level : "off";
+  if (!busy($("#level"))) $("#level").value = s.level;
+  if (!busy($("#rate"))) { $("#rate").value = s.rate; $("#rate-o").textContent = s.rate + " flows/s"; }
+  const T = s.timer, mmss = (n) => String(Math.floor(n / 60)).padStart(2, "0") + ":" + String(n % 60).padStart(2, "0");
+  $("#t-msg").textContent = T.active ? "Running until " + T.until + " (" + mmss(T.left) + " left)." : T.finished ? "Timed run finished. The traffic has stopped; generate the report, or press Resume." : "Traffic is simulated until the time is reached, then it stops so the report covers exactly this run.";
+  if (T.finished && !window.wasFinished && $("#t-auto").checked) { $("#rep-min").value = "0"; $("#b-report").click(); }
+  window.wasFinished = T.finished;
+  const k = s.kpi;
+  $("#k-flows").textContent = k.flows.toLocaleString(); $("#k-alerts").textContent = k.alerts.toLocaleString(); $("#k-drop").textContent = k.dropped.toLocaleString(); $("#k-blk").textContent = k.blocked + " source" + (k.blocked === 1 ? "" : "s") + " blocked";
+  $("#k-det").textContent = k.detection == null ? "--" : (k.detection * 100).toFixed(1) + "%"; $("#k-fa").textContent = k.false_alarm == null ? "--" : (k.false_alarm * 100).toFixed(1) + "%"; $("#k-bw").textContent = k.mbps.toFixed(2);
+  const last = s.series[s.series.length - 1]; $("#k-rate").textContent = last ? last.flows + " flows/s now" : " ";
+  chart($("#ch-bw"), s.series, [{ key:"mbps", color:"#eef1f6", fill:true }], 1, "Mbit/s");
+  chart($("#ch-fl"), s.series, [{ key:"flows", color:"#8e98a8", fill:true }, { key:"alerts", color:"#ff3b4f" }], 12, "flows per second");
+  setBreakdown(s.by_type);
+  const feed = $("#feed"), stick = feed.scrollTop + feed.clientHeight >= feed.scrollHeight - 30;
+  s.events.forEach((e) => feed.appendChild(feedLine(e)));
+  while (feed.children.length > 160) feed.removeChild(feed.firstChild);
+  if (stick) feed.scrollTop = feed.scrollHeight;
+  const body = $("#alerts"); $("#no-alerts").style.display = s.alerts.length ? "none" : "block";
+  body.innerHTML = s.alerts.slice(0, 25).map((a) => `<tr class="${a.id > lastAlertId ? "new" : ""}"><td class="mono">${a.t}</td><td><span class="tag sev-${a.sev}">${a.sev.toUpperCase()}</span></td><td><b style="color:${COL[a.type]}">${NAME[a.type] || a.type}</b><div style="color:var(--mute);font-size:11px">${esc(a.mitre)}<br>by ${a.by}</div></td><td class="mono">${a.src}<br>&rarr; ${a.dst}:${a.port}</td><td>${esc(a.detail)}${a.request ? `<div class="mono" style="color:var(--mute);font-size:11px;word-break:break-all">${esc(a.request.slice(0, 70))}</div>` : ""}</td></tr>`).join("");
+  if (s.alerts.length) lastAlertId = Math.max(lastAlertId, s.alerts[0].id);
+  $("#no-sqli").style.display = s.sqli.length ? "none" : "block";
+  $("#sqli").innerHTML = s.sqli.map((a) => `<div class="sq">${hl(a.request)}<div class="m">${a.t} &middot; ${a.src} &middot; ${a.detail}</div></div>`).join("");
+  $("#no-blk").style.display = s.blocked.length ? "none" : "block";
+  $("#blocked").innerHTML = s.blocked.map((b) => `<div class="row mono"><span style="min-width:110px;color:var(--red)">${b.ip}</span><span style="color:var(--mute);min-width:70px">${b.type}</span><span class="bar"><i style="width:${(b.left / 40) * 100}%;background:var(--amber)"></i></span><span style="color:var(--mute)">${b.left}s</span></div>`).join("");
+  const mx = Math.max(1, ...s.top.map((t) => t.n));
+  $("#top").innerHTML = s.top.map((t) => `<div class="row mono"><span style="min-width:110px">${t.ip}</span><span class="bar"><i style="width:${(t.n / mx) * 100}%;background:var(--red)"></i></span><span style="color:var(--mute)">${t.n}</span></div>`).join("") || '<div class="empty">no offenders</div>';
+  since = s.last_id;
+}
+async function tick() {
+  try { render(await (await fetch("/api/state?since=" + since)).json()); }
+  catch (e) { $("#eng").textContent = "Engine offline"; $("#dot").className = "dot off"; }
+}
+document.querySelectorAll("button[data-a]").forEach((b) => (b.onclick = () => post("/api/attack/" + b.dataset.a)));
+$("#b-scn").onclick = () => post("/api/scenario"); $("#b-pause").onclick = () => post("/api/pause");
+$("#b-unb").onclick = () => post("/api/unblock"); $("#b-reset").onclick = () => { $("#feed").innerHTML = ""; since = 0; lastAlertId = 0; post("/api/reset"); };
+fetch("/api/model").then((r) => r.json()).then((m) => {
+  const best = Math.max(...Object.values(m.models).map((x) => x.macro_f1)), z = m.zero_day;
+  $("#models").className = ""; $("#models").innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:6px 30px">' +
+    Object.entries(m.models).map(([n, x]) => `<div class="row"><span style="min-width:130px">${n}</span><span class="bar"><i style="width:${x.macro_f1 * 100}%;background:${x.macro_f1 === best ? "var(--green)" : "var(--cyan)"}"></i></span><span class="mono">F1 ${x.macro_f1.toFixed(3)}</span></div>`).join("") +
+    `</div><div style="margin-top:10px;font-size:13px;color:var(--mute)">Unknown botnet traffic (never seen in training): the ensemble flags <b style="color:var(--ink)">${(z.ensemble * 100).toFixed(1)}%</b> as attacks but can only guess a class; the K-Means detector, which learned normal traffic only, flags <b style="color:var(--green)">${(z.kmeans * 100).toFixed(1)}%</b> as anomalous at a ${(m.kmeans_flagged["normal (false alarm)"] * 100).toFixed(1)}% false-alarm cost.</div>`;
+}).catch(() => { $("#models").textContent = "Run python train.py to see model results."; });
+$("#rate").oninput = (e) => { $("#rate-o").textContent = e.target.value + " flows/s"; };
+$("#rate").onchange = (e) => post("/api/rate?value=" + e.target.value);
+$("#b-flash").onclick = () => post("/api/attack/flash");
+$("#b-random").onclick = () => post("/api/random");
+const setAuto = () => post(`/api/auto?on=${$("#auto").checked}&level=${$("#level").value}`);
+$("#auto").onchange = setAuto; $("#level").onchange = setAuto;
+$("#b-timer").onclick = async () => {
+  const until = $("#t-until").value, q = until ? "until=" + until : "minutes=" + $("#t-min").value;
+  try {
+    const r = await fetch("/api/timer?" + q + "&fresh=" + $("#t-fresh").checked, { method:"POST" });
+    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+    if ($("#t-fresh").checked) { $("#feed").innerHTML = ""; since = 0; lastAlertId = 0; }
+    window.wasFinished = false; tick();
+  } catch (e) { $("#t-msg").textContent = "Could not start the timer: " + e.message; }
+};
+$("#b-tcancel").onclick = () => post("/api/timer/cancel");
+$("#b-report").onclick = async () => {
+  const b = $("#b-report"), msg = $("#rep-msg"), min = $("#rep-min").value;
+  b.disabled = true; msg.textContent = "Building the report...";
+  try {
+    const r = await fetch("/api/report?minutes=" + min);
+    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+    const blob = await r.blob(), a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "attack-report-" + (min === "0" ? "all" : "last-" + min + "min") + ".pdf"; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    msg.textContent = "Report downloaded (" + r.headers.get("X-Pages") + " pages).";
+  } catch (e) { msg.textContent = "Could not build the report: " + e.message; }
+  finally { b.disabled = false; }
+};
+tick(); setInterval(tick, 1000);
+</script>
+</body>
+</html>

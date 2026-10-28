@@ -1,0 +1,31 @@
+|--- serror_rate <= 0.17
+|   |--- url_len <= 31.50
+|   |   |--- dst_bytes <= 263471.81
+|   |   |   |--- n_special <= 0.50
+|   |   |   |   |--- truncated branch of depth 5
+|   |   |   |--- n_special >  0.50
+|   |   |   |   |--- truncated branch of depth 5
+|   |   |--- dst_bytes >  263471.81
+|   |   |   |--- url_len <= 22.50
+|   |   |   |   |--- class: normal
+|   |   |   |--- url_len >  22.50
+|   |   |   |   |--- truncated branch of depth 5
+|   |--- url_len >  31.50
+|   |   |--- n_special <= 0.50
+|   |   |   |--- url_len <= 32.50
+|   |   |   |   |--- truncated branch of depth 2
+|   |   |   |--- url_len >  32.50
+|   |   |   |   |--- class: brute_force
+|   |   |--- n_special >  0.50
+|   |   |   |--- class: sqli
+|--- serror_rate >  0.17
+|   |--- srv_count <= 20.00
+|   |   |--- dst_host_count <= 81.50
+|   |   |   |--- serror_rate <= 0.78
+|   |   |   |   |--- truncated branch of depth 5
+|   |   |   |--- serror_rate >  0.78
+|   |   |   |   |--- truncated branch of depth 3
+|   |   |--- dst_host_count >  81.50
+|   |   |   |--- class: probe
+|   |--- srv_count >  20.00
+|   |   |--- class: dos
